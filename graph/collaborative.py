@@ -11,7 +11,7 @@ from .weight import inverse_prop
 def create_from(path=None, data=None, weight=inverse_prop):
     """Creates a collaborative hero graph.
 
-    Only specify ONE of the parameters.
+    Only specify either the path OR the data parameter, NOT both.
 
     :arg
     path (str) - the path to a file to create the graph from.
