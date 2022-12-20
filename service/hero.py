@@ -7,8 +7,9 @@ import pandas as pd
 class HeroService:
     """A service class that provides hero information."""
 
-    def __init__(self, edges):
-        self.edges = edges
+    def __init__(self, heroes):
+        self.heroes = heroes
+        self.hero_counts = None
 
     @staticmethod
     def create_from(edges):
@@ -22,7 +23,7 @@ class HeroService:
         if not (isinstance(edges, str) or isinstance(edges, pd.DataFrame)):
             raise ValueError(f'The edges must either be of type string or a pandas DataFrame. Received type: {type(edges)}')
         if isinstance(edges, str):
-            edges = pd.read_csv(edges)
+            edges = pd.read_csv(edges).hero.values
 
         return HeroService(edges)
 
@@ -37,4 +38,8 @@ class HeroService:
         :return
         a set of the top n heroes.
         """
-        return Counter(self.edges.hero.values).most_common(n)
+        if not self.hero_counts:
+            self.hero_counts = Counter(self.heroes)
+
+        top_n = list(zip(*self.hero_counts.most_common(n)))[0]
+        return list(top_n)
