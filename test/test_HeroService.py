@@ -12,7 +12,6 @@ def hero_service():
 def test_that_top_n_are_correct(hero_service):
     expected_names = ['Captain America', 'Iron Man']
 
-    names = list(zip(*hero_service.top_n(2)))[0]
-    names = list(names)
+    names = hero_service.top_n(2)
 
     assert names == expected_names
