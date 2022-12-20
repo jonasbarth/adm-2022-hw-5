@@ -21,8 +21,7 @@ def create_from(path=None, data=None):
         raise ValueError('You should only specify either path or data, not both.')
 
     if path:
-        hero_network = pd.read_csv(path)
-        return _create_graph_from_data(hero_network)
+        data = pd.read_csv(path)
 
     _create_graph_from_data(data)
 
