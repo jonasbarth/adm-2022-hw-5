@@ -11,7 +11,7 @@ from a **path** to a `.csv` file or directly from a **pandas DataFrame**.
 To create a collaborative graph from a `.csv`:
 ```python
 import graph.collaborative
-graph.collaborative.create_from(path='data/hero-network.csv')
+graph.collaborative.create_from(data='data/hero-network.csv')
 ```
 
 When creating the graph from a `.csv`, all of the [preprocessing](#preprocessing) steps will be applied.

@@ -7,8 +7,10 @@ import pandas as pd
 from .preprocess import remove_self_loops, strip_trailing_characters, replace_hero
 from .weight import inverse_prob
 
+_ACCEPTED_TYPES = {str, pd.DataFrame}
 
-def create_from(path=None, data=None, weight=inverse_prob):
+
+def create_from(data=None, weight=inverse_prob):
     """Creates a collaborative hero graph.
 
     Only specify either the path OR the data parameter, NOT both.
@@ -21,16 +23,19 @@ def create_from(path=None, data=None, weight=inverse_prob):
     :return
     A networkx graph.
     """
-    if path and data:
-        raise ValueError('You should only specify either path or data, not both.')
+    if not type(data) in _ACCEPTED_TYPES:
+        raise ValueError(f'The data must be of the allowed types {_ACCEPTED_TYPES}. type(data) = {type(data)}')
 
-    if path:
-        data = pd.read_csv(path)
+    if isinstance(data, str):
+        data = pd.read_csv(data)
         remove_self_loops(data)
         strip_trailing_characters(data)
         replace_hero(data, 'SPIDER-MAN/PETER PAR', 'SPIDER-MAN/PETER PARKER')
 
-    return _create_graph_from_data(data)
+        return _create_graph_from_data(data)
+
+    if isinstance(data, pd.DataFrame):
+        return _create_graph_from_data(data)
 
 
 def _create_graph_from_data(data, weight=inverse_prob):
