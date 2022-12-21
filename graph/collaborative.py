@@ -4,11 +4,11 @@ from collections import Counter
 import networkx as nx
 import pandas as pd
 
-from .preprocess import remove_self_loops
-from .weight import inverse_prop
+from .preprocess import remove_self_loops, strip_trailing_characters
+from .weight import inverse_prob
 
 
-def create_from(path=None, data=None, weight=inverse_prop):
+def create_from(path=None, data=None, weight=inverse_prob):
     """Creates a collaborative hero graph.
 
     Only specify either the path OR the data parameter, NOT both.
@@ -26,11 +26,13 @@ def create_from(path=None, data=None, weight=inverse_prop):
 
     if path:
         data = pd.read_csv(path)
+        remove_self_loops(data)
+        strip_trailing_characters(data)
 
     return _create_graph_from_data(data)
 
 
-def _create_graph_from_data(data, weight=inverse_prop):
+def _create_graph_from_data(data, weight=inverse_prob):
     multi_graph = _create_multi_graph_from_data(data)
     return _create_weighted_graph_from_multi_graph(multi_graph)
 
@@ -47,8 +49,6 @@ def _create_multi_graph_from_data(data):
     :return
     an networkx multigraph.
     """
-    remove_self_loops(data)
-
     graph = nx.MultiGraph()
     nodes = set(data.hero1.values).union(set(data.hero2.values))
     edges = zip(data.hero1.values, data.hero2.values)
@@ -58,7 +58,7 @@ def _create_multi_graph_from_data(data):
     return graph
 
 
-def _create_weighted_graph_from_multi_graph(multi_graph, weight=inverse_prop):
+def _create_weighted_graph_from_multi_graph(multi_graph, weight=inverse_prob):
     """Creates an undirected, weighted graph from an existing multigraph.
 
     :arg

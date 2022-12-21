@@ -2,6 +2,7 @@
 
 import pandas as pd
 import networkx as nx
+from .preprocess import strip_trailing_characters
 
 _ACCEPTED_TYPES = {str, pd.DataFrame}
 
@@ -31,9 +32,11 @@ def create_from(nodes=None, edges=None):
     if isinstance(nodes, str) and isinstance(edges, str):
         # both will be loaded from a path
         nodes = pd.read_csv(nodes)
+        strip_trailing_characters(nodes)
         nodes = [(node, node_type) for node, node_type in zip(nodes.node, nodes.type)]
 
         edges = pd.read_csv(edges)
+        strip_trailing_characters(edges)
         edges = zip(edges.hero, edges.comic)
 
         graph = nx.Graph()

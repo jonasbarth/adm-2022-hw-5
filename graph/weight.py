@@ -1,7 +1,7 @@
 """A module for functions that calculate weights between nodes in a graph."""
 
 
-def inverse_prop(hero1, hero2, n_edges):
+def inverse_prob(hero1, hero2, n_edges):
     """Calculates the weight of the edges between two heroes in the hero graph as an inverse proportion: 1 / n_edges.
 
     The more collaborations the two heros have, the lower the weight.
