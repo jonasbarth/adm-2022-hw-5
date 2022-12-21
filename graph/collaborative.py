@@ -4,7 +4,7 @@ from collections import Counter
 import networkx as nx
 import pandas as pd
 
-from .preprocess import remove_self_loops, strip_trailing_characters
+from .preprocess import remove_self_loops, strip_trailing_characters, replace_hero
 from .weight import inverse_prob
 
 
@@ -28,6 +28,7 @@ def create_from(path=None, data=None, weight=inverse_prob):
         data = pd.read_csv(path)
         remove_self_loops(data)
         strip_trailing_characters(data)
+        replace_hero(data, 'SPIDER-MAN/PETER PAR', 'SPIDER-MAN/PETER PARKER')
 
     return _create_graph_from_data(data)
 
