@@ -1,8 +1,10 @@
 """This module is the central entry point to all backend functionalities."""
+
 import networkx as nx
 
 from service.hero import TopHeroService
 from .describe import GraphMode, GraphType, GraphFeatures
+from graph.hero_comic import get_n_heroes_per_comic
 
 
 def features(graph: nx.Graph, graph_type: GraphType, top_n: int):
@@ -25,7 +27,7 @@ def features(graph: nx.Graph, graph_type: GraphType, top_n: int):
         hero_collabs = None
 
     elif graph_type == GraphType.HERO_COMIC:
-        n_heroes_per_comic = None
+        n_heroes_per_comic = get_n_heroes_per_comic(subgraph)
 
     density = nx.density(graph)
     degree_dist = None

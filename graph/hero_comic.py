@@ -3,6 +3,7 @@
 import pandas as pd
 import networkx as nx
 from .preprocess import strip_trailing_characters
+from domain import Comic
 
 _ACCEPTED_TYPES = {str, pd.DataFrame}
 
@@ -17,6 +18,9 @@ def create_from(nodes=None, edges=None):
     :arg
     nodes (str | pd.DataFrame) - the path to a file with nodes or a pandas dataframe with the nodes.
     edges (str | pd.DataFrame) - the path to a file with edges or a pandas dataframe with the edges.
+
+    :return
+    an undirected, unweighted networkx graph with comics and heroes as nodes.
     """
 
     if not (nodes and edges):
@@ -55,3 +59,32 @@ def create_from(nodes=None, edges=None):
         graph.add_edges_from(edges)
 
         return graph
+
+
+def get_comic_nodes(graph: nx.Graph):
+    """Returns all nodes in the graph with the type attribute set to 'comic'.
+
+    :arg
+    graph (nx.Graph) - a networkx graph.
+
+    :return
+    a list of node names that are comics.
+    """
+    return [node for node, attributes in graph.nodes(data=True) if attributes['type'] == 'comic']
+
+
+def get_n_heroes_per_comic(graph: nx.Graph):
+    """Gets the number of heroes per comic.
+
+    :arg
+    graph (nx.Graph) - the graph where of comics and heroes. Comics nodes should have 'comic' as data and be connected
+    to the heroes that appear in them.
+
+    :return
+    a list of Comic namedtuples.
+    """
+    comics = []
+    for comic in get_comic_nodes(graph):
+        comics.append(Comic(comic, graph.degree(comic)))
+
+    return comics
