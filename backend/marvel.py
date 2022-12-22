@@ -1,7 +1,7 @@
 """This module is the central entry point to all backend functionalities."""
 import networkx as nx
 
-from service.hero import HeroService
+from service.hero import TopHeroService
 from .describe import GraphMode, GraphType, GraphFeatures
 
 
@@ -17,7 +17,7 @@ def features(graph: nx.Graph, graph_type: GraphType, top_n: int):
     a GraphFeatures object.
     """
     n_nodes = len(graph.nodes())
-    hs = HeroService.create_from(graph.nodes())
+    hs = TopHeroService.create_from(graph.nodes())
 
     subgraph = graph.subgraph(hs.top_n(top_n))
 

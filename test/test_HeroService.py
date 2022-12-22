@@ -1,12 +1,12 @@
 """Unit tests for HeroSerivce class."""
 import pytest
 
-from service.hero import HeroService
+from service.hero import TopHeroService
 
 
 @pytest.fixture
 def hero_service():
-    return HeroService.create_from('resources/test_edges.csv')
+    return TopHeroService.create_from('resources/test_edges.csv')
 
 
 def test_that_top_n_are_correct(hero_service):
