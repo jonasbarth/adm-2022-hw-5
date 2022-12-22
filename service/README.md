@@ -25,7 +25,7 @@ Creating the service from a pandas DataFrame:
 from service import TopHeroService
 import pandas as pd
 
-edges = 'data/edges.csv'
+edges = pd.read_csv('data/edges.csv')
 hero_service = TopHeroService.create_from(data=edges, preprocess=True)
 ```
 
