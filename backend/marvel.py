@@ -3,7 +3,7 @@
 import networkx as nx
 
 from service.hero import TopHeroService
-from .describe import GraphMode, GraphType, GraphFeatures
+from .describe import GraphMode, GraphType, GraphFeatures, get_degree_dist, get_hubs
 from graph.hero_comic import get_n_heroes_per_comic
 from graph.collaborative import get_hero_collabs
 
@@ -32,10 +32,10 @@ def features(graph: nx.Graph, graph_type: GraphType, top_n: int):
         n_heroes_per_comic = get_n_heroes_per_comic(subgraph)
 
     density = nx.density(graph)
-    degree_dist = None
+    degree_dist = get_degree_dist(graph)
 
     avg_degree = sum(map(lambda node: graph.degree(node), graph.nodes)) / n_nodes
 
-    hubs = {}
+    hubs = get_hubs(graph, 95)
 
     return GraphFeatures(graph_type, n_nodes, hero_collabs, n_heroes_per_comic, density, degree_dist, avg_degree, hubs, GraphMode.DENSE)
