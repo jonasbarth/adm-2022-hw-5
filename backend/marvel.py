@@ -5,6 +5,7 @@ import networkx as nx
 from service.hero import TopHeroService
 from .describe import GraphMode, GraphType, GraphFeatures
 from graph.hero_comic import get_n_heroes_per_comic
+from graph.collaborative import get_hero_collabs
 
 
 def features(graph: nx.Graph, graph_type: GraphType, top_n: int):
@@ -18,13 +19,14 @@ def features(graph: nx.Graph, graph_type: GraphType, top_n: int):
     :return
     a GraphFeatures object.
     """
+    hero_collabs = {}
     n_nodes = len(graph.nodes())
     hs = TopHeroService.create_from(graph.nodes())
 
     subgraph = graph.subgraph(hs.top_n(top_n))
 
     if graph_type == GraphType.COLLABORATIVE:
-        hero_collabs = None
+        hero_collabs = get_hero_collabs(graph)
 
     elif graph_type == GraphType.HERO_COMIC:
         n_heroes_per_comic = get_n_heroes_per_comic(subgraph)
@@ -33,6 +35,7 @@ def features(graph: nx.Graph, graph_type: GraphType, top_n: int):
     degree_dist = None
 
     avg_degree = sum(map(lambda node: graph.degree(node), graph.nodes)) / n_nodes
+
     hubs = {}
 
-    return GraphFeatures(n_nodes, hero_collabs, n_heroes_per_comic, density, degree_dist, avg_degree, hubs, GraphMode.DENSE)
+    return GraphFeatures(graph_type, n_nodes, hero_collabs, n_heroes_per_comic, density, degree_dist, avg_degree, hubs, GraphMode.DENSE)

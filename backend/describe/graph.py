@@ -22,9 +22,10 @@ class GraphMode(Enum):
     DENSE = 1
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, repr=True)
 class GraphFeatures:
     """A dataclass for describing graph features."""
+    graph_type: GraphType
     n_nodes: int
     hero_collabs: any
     n_heroes_per_comic: any

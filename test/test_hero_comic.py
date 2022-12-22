@@ -12,6 +12,7 @@ def graph():
 
     return g
 
+
 def test_that_n_heroes_per_comic_correct(graph):
     heroes_per_comic, *_ = hero_comic.get_n_heroes_per_comic(graph)
 
