@@ -4,6 +4,8 @@ from collections import Counter
 import networkx as nx
 import pandas as pd
 
+from backend.describe import GraphType
+from backend.domain.hero import Collaboration
 from .preprocess import remove_self_loops, strip_trailing_characters, replace_hero
 from .weight import inverse_prob
 
@@ -21,7 +23,7 @@ def create_from(data=None, weight=inverse_prob):
     weight (function) - a function that is used to weight the edges between heroes.
 
     :return
-    A networkx graph.
+    A weighted, undirected, collaborative networkx graph of the hero data, and its graph type.
     """
     if not type(data) in _ACCEPTED_TYPES:
         raise ValueError(f'The data must be of the allowed types {_ACCEPTED_TYPES}. type(data) = {type(data)}')
@@ -32,10 +34,10 @@ def create_from(data=None, weight=inverse_prob):
         strip_trailing_characters(data)
         replace_hero(data, 'SPIDER-MAN/PETER PAR', 'SPIDER-MAN/PETER PARKER')
 
-        return _create_graph_from_data(data)
+        return _create_graph_from_data(data), GraphType.COLLABORATIVE
 
     if isinstance(data, pd.DataFrame):
-        return _create_graph_from_data(data)
+        return _create_graph_from_data(data), GraphType.COLLABORATIVE
 
 
 def _create_graph_from_data(data, weight=inverse_prob):
@@ -78,10 +80,37 @@ def _create_weighted_graph_from_multi_graph(multi_graph, weight=inverse_prob):
         node_n_edges = Counter(multi_graph.edges(node))
 
         for edge, n in node_n_edges.items():
-            weighted_edges.append((*edge, {'weight': weight(*edge, n)}))
+            weighted_edges.append((*edge, {'weight': weight(*edge, n), 'n_collabs': n}))
 
     weighted_graph = nx.Graph()
     weighted_graph.add_nodes_from(multi_graph.nodes())
     weighted_graph.add_edges_from(weighted_edges)
 
     return weighted_graph
+
+
+def get_hero_collabs(graph: nx.Graph):
+    """Gets the number of collaborations between all heroes.
+
+    For every hero, it will find the number of collaborations it has with each other hero. There will only ever be one
+    object per hero collaboration. E.g. if Iron Man and Captain America have 2 collaborations, there won't be
+    { Collaboration('Iron Man', 'Captain America', 2), Collaboration('Captain America', 'Iron Man', 2) } but only one
+    of them.
+
+    :arg
+    graph (nx.Graph) - a networkx graph.
+
+    :return
+    a set of unique hero collaborations.
+    """
+    collabs = set()
+    for hero in graph.nodes():
+
+        for neigh in graph.neighbors(hero):
+            n_collabs = graph.get_edge_data(hero, neigh)['n_collabs']
+            collab = Collaboration(hero, neigh, n_collabs)
+            collabs.add(collab)
+
+    return collabs
+
+

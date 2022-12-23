@@ -2,7 +2,10 @@
 
 import pandas as pd
 import networkx as nx
-from .preprocess import strip_trailing_characters
+
+from backend.describe import GraphType
+from .preprocess import strip_trailing_characters, replace_hero
+from backend.domain import Comic
 
 _ACCEPTED_TYPES = {str, pd.DataFrame}
 
@@ -17,6 +20,9 @@ def create_from(nodes=None, edges=None):
     :arg
     nodes (str | pd.DataFrame) - the path to a file with nodes or a pandas dataframe with the nodes.
     edges (str | pd.DataFrame) - the path to a file with edges or a pandas dataframe with the edges.
+
+    :return
+    an undirected, unweighted networkx graph with comics and heroes as nodes, and its graph type.
     """
 
     if not (nodes and edges):
@@ -33,7 +39,8 @@ def create_from(nodes=None, edges=None):
         # both will be loaded from a path
         nodes = pd.read_csv(nodes)
         strip_trailing_characters(nodes)
-        nodes = [(node, node_type) for node, node_type in zip(nodes.node, nodes.type)]
+        replace_hero(nodes, 'SPIDER-MAN/PETER PARKERKER', 'SPIDER-MAN/PETER PARKER')
+        nodes = [(node, {'type': node_type}) for node, node_type in zip(nodes.node, nodes.type)]
 
         edges = pd.read_csv(edges)
         strip_trailing_characters(edges)
@@ -43,7 +50,7 @@ def create_from(nodes=None, edges=None):
         graph.add_nodes_from(nodes)
         graph.add_edges_from(edges)
 
-        return graph
+        return graph, GraphType.HERO_COMIC
 
     elif isinstance(nodes, pd.DataFrame) and isinstance(edges, pd.DataFrame):
         # create graph from dataframes
@@ -54,4 +61,40 @@ def create_from(nodes=None, edges=None):
         graph.add_nodes_from(nodes)
         graph.add_edges_from(edges)
 
-        return graph
+        return graph, GraphType.HERO_COMIC
+
+
+def get_comic_nodes(graph: nx.Graph):
+    """Returns all nodes in the graph with the type attribute set to 'comic'.
+
+    :arg
+    graph (nx.Graph) - a networkx graph.
+
+    :return
+    a list of node names that are comics.
+    """
+    for node, attributes in graph.nodes(data=True):
+        try:
+            if attributes['type'] == 'comic':
+                #print(attributes)
+                pass
+        except KeyError as e:
+            print(f'Node: {node}. Attributes: {attributes}. {e}')
+    return [node for node, attributes in graph.nodes(data=True) if attributes['type'] == 'comic']
+
+
+def get_n_heroes_per_comic(graph: nx.Graph):
+    """Gets the number of heroes per comic.
+
+    :arg
+    graph (nx.Graph) - the graph where of comics and heroes. Comics nodes should have 'comic' as data and be connected
+    to the heroes that appear in them.
+
+    :return
+    a list of Comic instances.
+    """
+    comics = []
+    for comic in get_comic_nodes(graph):
+        comics.append(Comic(comic, graph.degree(comic)))
+
+    return comics

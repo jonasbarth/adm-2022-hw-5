@@ -2,6 +2,7 @@
 The purpose of the `graph` package is gather functions related to the Marvel hero graphs.
 
 # Creating graphs
+The functions for creating graphs all return a tuple of `(networkx.Graph, GraphType)`.
 
 ## Collaborative (First Graph)
 The `collaborative` module exposes methods for creating collaborative graphs. You can create a collaborative graph
@@ -9,20 +10,26 @@ from a **path** to a `.csv` file or directly from a **pandas DataFrame**.
 
 ### From .csv
 To create a collaborative graph from a `.csv`:
+
 ```python
-import graph.collaborative
-graph.collaborative.create_from(data='data/hero-network.csv')
+
+from backend import graph
+
+g, graph_type = graph.collaborative.create_from(data='data/hero-network.csv')
 ```
 
 When creating the graph from a `.csv`, all of the [preprocessing](#preprocessing) steps will be applied.
 
 ### From dataframe
 To create the collaborative graph from a pandas dataframe:
+
 ```python
-import graph.collaborative
+
+from backend import graph
 import pandas as pd
+
 hero_network = pd.read_csv('data/hero-network.csv')
-graph.collaborative.create_from(data=hero_network)
+g, graph_type = graph.collaborative.create_from(data=hero_network)
 ```
 
 When creating the graph from a dataframe, **NONE** of the [preprocessing](#preprocessing) steps will be applied. The data is assumed to be
@@ -55,23 +62,28 @@ from.
 
 ### From csv
 To create a hero-comic graph from a `.csv`:
+
 ```python
-import graph.hero_comic
-graph.hero_comic.create_from(nodes='data/nodes.csv', edges='data/edges.csv')
+
+from backend import graph
+
+g, graph_type = graph.hero_comic.create_from(nodes='data/nodes.csv', edges='data/edges.csv')
 ```
 
 When creating the graph from a `.csv`, all of the [preprocessing](#preprocessing) steps will be applied.
 
 ### From dataframe
 To create a hero-comic graph from pandas dataframes:
+
 ```python
-import graph.hero_comic
+
+from backend import graph
 import pandas as pd
 
 nodes = pd.read_csv('data/nodes.csv')
 edges = pd.read_csv('data/edges.csv')
 
-graph.hero_comic.create_from(nodes=nodes, edges=edges)
+g, graph_type = graph.hero_comic.create_from(nodes=nodes, edges=edges)
 ```
 
 When creating the graph from a dataframe, **NONE** of the [preprocessing](#preprocessing) steps will be applied. The data is assumed to be

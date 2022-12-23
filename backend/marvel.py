@@ -1,8 +1,12 @@
 """This module is the central entry point to all backend functionalities."""
+
 import networkx as nx
 
-from service.hero import TopHeroService
-from .describe import GraphMode, GraphType, GraphFeatures
+import itertools
+from backend.service import TopHeroService
+from .describe import GraphMode, GraphType, GraphFeatures, get_degree_dist, get_hubs
+from backend.graph import get_n_heroes_per_comic
+from backend.graph import get_hero_collabs
 
 
 def features(graph: nx.Graph, graph_type: GraphType, top_n: int):
@@ -16,21 +20,27 @@ def features(graph: nx.Graph, graph_type: GraphType, top_n: int):
     :return
     a GraphFeatures object.
     """
+    hero_collabs = {}
+    n_heroes_per_comic = []
     n_nodes = len(graph.nodes())
-    hs = TopHeroService.create_from(graph.nodes())
+    hs = TopHeroService.create_from('data/edges.csv')
 
-    subgraph = graph.subgraph(hs.top_n(top_n))
+    top_heroes = hs.top_n(top_n)
 
     if graph_type == GraphType.COLLABORATIVE:
-        hero_collabs = None
+        subgraph = graph.subgraph(top_heroes)
+        hero_collabs = get_hero_collabs(subgraph)
 
     elif graph_type == GraphType.HERO_COMIC:
-        n_heroes_per_comic = None
+        comics = list(itertools.chain(*set(graph.neighbors(hero) for hero in hs.top_n(top_n))))
+        subgraph = graph.subgraph(top_heroes + comics)
+        n_heroes_per_comic = get_n_heroes_per_comic(subgraph)
 
     density = nx.density(graph)
-    degree_dist = None
+    degree_dist = get_degree_dist(graph)
 
     avg_degree = sum(map(lambda node: graph.degree(node), graph.nodes)) / n_nodes
-    hubs = {}
 
-    return GraphFeatures(n_nodes, hero_collabs, n_heroes_per_comic, density, degree_dist, avg_degree, hubs, GraphMode.DENSE)
+    hubs = get_hubs(graph, 95)
+
+    return GraphFeatures(graph_type, n_nodes, hero_collabs, n_heroes_per_comic, density, degree_dist, avg_degree, hubs, GraphMode.DENSE)

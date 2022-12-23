@@ -4,7 +4,7 @@ import pytest
 import pandas as pd
 import numpy as np
 
-from graph.preprocess import strip_trailing_characters, replace_hero
+from backend.graph import strip_trailing_characters, replace_hero
 
 @pytest.fixture
 def data():

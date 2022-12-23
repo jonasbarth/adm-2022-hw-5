@@ -3,7 +3,7 @@ from collections import Counter
 
 import pandas as pd
 
-from graph.preprocess import strip_trailing_characters, replace_hero
+from backend.graph.preprocess import strip_trailing_characters, replace_hero
 
 
 class TopHeroService:
