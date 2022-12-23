@@ -2,6 +2,7 @@
 
 import networkx as nx
 
+import itertools
 from backend.service import TopHeroService
 from .describe import GraphMode, GraphType, GraphFeatures, get_degree_dist, get_hubs
 from backend.graph import get_n_heroes_per_comic
@@ -22,14 +23,17 @@ def features(graph: nx.Graph, graph_type: GraphType, top_n: int):
     hero_collabs = {}
     n_heroes_per_comic = []
     n_nodes = len(graph.nodes())
-    hs = TopHeroService.create_from(graph.nodes())
+    hs = TopHeroService.create_from('data/edges.csv')
 
-    subgraph = graph.subgraph(hs.top_n(top_n))
+    top_heroes = hs.top_n(top_n)
 
     if graph_type == GraphType.COLLABORATIVE:
-        hero_collabs = get_hero_collabs(graph)
+        subgraph = graph.subgraph(top_heroes)
+        hero_collabs = get_hero_collabs(subgraph)
 
     elif graph_type == GraphType.HERO_COMIC:
+        comics = list(itertools.chain(*set(graph.neighbors(hero) for hero in hs.top_n(top_n))))
+        subgraph = graph.subgraph(top_heroes + comics)
         n_heroes_per_comic = get_n_heroes_per_comic(subgraph)
 
     density = nx.density(graph)

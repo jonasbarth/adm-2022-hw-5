@@ -18,3 +18,11 @@ def test_that_n_heroes_per_comic_correct(graph):
 
     assert heroes_per_comic.name == 'Civil War'
     assert heroes_per_comic.n_heroes == 1
+
+
+def test_that_get_comic_nodes_correct(graph):
+    expected_comics = ['Civil War']
+
+    comics = hero_comic.get_comic_nodes(graph)
+
+    assert comics == expected_comics

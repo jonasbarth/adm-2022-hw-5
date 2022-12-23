@@ -4,7 +4,7 @@ import pandas as pd
 import networkx as nx
 
 from backend.describe import GraphType
-from .preprocess import strip_trailing_characters
+from .preprocess import strip_trailing_characters, replace_hero
 from backend.domain import Comic
 
 _ACCEPTED_TYPES = {str, pd.DataFrame}
@@ -39,7 +39,8 @@ def create_from(nodes=None, edges=None):
         # both will be loaded from a path
         nodes = pd.read_csv(nodes)
         strip_trailing_characters(nodes)
-        nodes = [(node, node_type) for node, node_type in zip(nodes.node, nodes.type)]
+        replace_hero(nodes, 'SPIDER-MAN/PETER PARKERKER', 'SPIDER-MAN/PETER PARKER')
+        nodes = [(node, {'type': node_type}) for node, node_type in zip(nodes.node, nodes.type)]
 
         edges = pd.read_csv(edges)
         strip_trailing_characters(edges)
@@ -72,6 +73,13 @@ def get_comic_nodes(graph: nx.Graph):
     :return
     a list of node names that are comics.
     """
+    for node, attributes in graph.nodes(data=True):
+        try:
+            if attributes['type'] == 'comic':
+                #print(attributes)
+                pass
+        except KeyError as e:
+            print(f'Node: {node}. Attributes: {attributes}. {e}')
     return [node for node, attributes in graph.nodes(data=True) if attributes['type'] == 'comic']
 
 
