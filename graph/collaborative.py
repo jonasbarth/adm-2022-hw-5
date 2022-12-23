@@ -4,6 +4,7 @@ from collections import Counter
 import networkx as nx
 import pandas as pd
 
+from backend.describe import GraphType
 from domain.hero import Collaboration
 from .preprocess import remove_self_loops, strip_trailing_characters, replace_hero
 from .weight import inverse_prob
@@ -22,7 +23,7 @@ def create_from(data=None, weight=inverse_prob):
     weight (function) - a function that is used to weight the edges between heroes.
 
     :return
-    A networkx graph.
+    A weighted, undirected, collaborative networkx graph of the hero data, and its graph type.
     """
     if not type(data) in _ACCEPTED_TYPES:
         raise ValueError(f'The data must be of the allowed types {_ACCEPTED_TYPES}. type(data) = {type(data)}')
@@ -33,10 +34,10 @@ def create_from(data=None, weight=inverse_prob):
         strip_trailing_characters(data)
         replace_hero(data, 'SPIDER-MAN/PETER PAR', 'SPIDER-MAN/PETER PARKER')
 
-        return _create_graph_from_data(data)
+        return _create_graph_from_data(data), GraphType.COLLABORATIVE
 
     if isinstance(data, pd.DataFrame):
-        return _create_graph_from_data(data)
+        return _create_graph_from_data(data), GraphType.COLLABORATIVE
 
 
 def _create_graph_from_data(data, weight=inverse_prob):

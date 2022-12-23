@@ -1,2 +1,2 @@
 from .comic import Comic
-from .hero import Hero
+from .hero import Collaboration

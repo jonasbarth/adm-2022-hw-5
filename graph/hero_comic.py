@@ -2,6 +2,8 @@
 
 import pandas as pd
 import networkx as nx
+
+from backend.describe import GraphType
 from .preprocess import strip_trailing_characters
 from domain import Comic
 
@@ -20,7 +22,7 @@ def create_from(nodes=None, edges=None):
     edges (str | pd.DataFrame) - the path to a file with edges or a pandas dataframe with the edges.
 
     :return
-    an undirected, unweighted networkx graph with comics and heroes as nodes.
+    an undirected, unweighted networkx graph with comics and heroes as nodes, and its graph type.
     """
 
     if not (nodes and edges):
@@ -47,7 +49,7 @@ def create_from(nodes=None, edges=None):
         graph.add_nodes_from(nodes)
         graph.add_edges_from(edges)
 
-        return graph
+        return graph, GraphType.HERO_COMIC
 
     elif isinstance(nodes, pd.DataFrame) and isinstance(edges, pd.DataFrame):
         # create graph from dataframes
@@ -58,7 +60,7 @@ def create_from(nodes=None, edges=None):
         graph.add_nodes_from(nodes)
         graph.add_edges_from(edges)
 
-        return graph
+        return graph, GraphType.HERO_COMIC
 
 
 def get_comic_nodes(graph: nx.Graph):
