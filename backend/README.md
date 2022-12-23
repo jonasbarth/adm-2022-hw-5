@@ -2,10 +2,18 @@
 The purpose of this package is to gather functionality for the backend part of the Marvel Hero Graphs. The backend exposes
 modules that allow you to:
 
-* create hero graphs from various sources
-* query hero graphs
-* get information about heroes
-* preprocess hero and comic data
+* [create hero graphs](graph/README.md) from various sources
+* [query hero graphs](manager.py)
+* [get information](service/README.md) about heroes
+* [preprocess](graph/preprocess.py) hero and comic data
+
+# Manager
+The manager module houses all the desired functionality that is used by the controller:
+* features
+* top superheroes
+* shortest ordered route
+* disconnecting graphs
+* extracting communities
 
 # Controller
 The entry point that users interact with is a controller system that that exposes an interfaces for running various 
