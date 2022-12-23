@@ -77,3 +77,20 @@ def get_hub_threshold(dist: pd.DataFrame, percentile: int):
     the hub threshold as an int value.
     """
     return np.percentile(dist.degree, percentile)
+
+
+def get_graph_mode(graph: nx.Graph):
+    """Returns the mode of the graph, i.e. whether it is sparse or dense.
+
+    :arg
+    graph (nx.Graph) - a networkx graph.
+
+    :return
+    a GraphMode Enum.
+    """
+    # 1 is maximum density, 0 is minimum density, so 0.5 is right in the middle.
+    if nx.density(graph) > 0.5:
+        return GraphMode.DENSE
+
+    return GraphMode.SPARSE
+

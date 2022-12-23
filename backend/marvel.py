@@ -4,7 +4,7 @@ import networkx as nx
 
 import itertools
 from backend.service import TopHeroService
-from .describe import GraphMode, GraphType, GraphFeatures, get_degree_dist, get_hubs
+from .describe import GraphMode, GraphType, GraphFeatures, get_degree_dist, get_hubs, get_graph_mode
 from backend.graph import get_n_heroes_per_comic
 from backend.graph import get_hero_collabs
 
@@ -43,4 +43,6 @@ def features(graph: nx.Graph, graph_type: GraphType, top_n: int):
 
     hubs = get_hubs(graph, 95)
 
-    return GraphFeatures(graph_type, n_nodes, hero_collabs, n_heroes_per_comic, density, degree_dist, avg_degree, hubs, GraphMode.DENSE)
+    graph_mode = get_graph_mode(subgraph)
+
+    return GraphFeatures(graph_type, n_nodes, hero_collabs, n_heroes_per_comic, density, degree_dist, avg_degree, hubs, graph_mode)
