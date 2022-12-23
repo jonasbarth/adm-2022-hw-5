@@ -5,7 +5,7 @@ import networkx as nx
 import pandas as pd
 
 from backend.describe import GraphType
-from domain.hero import Collaboration
+from backend.domain.hero import Collaboration
 from .preprocess import remove_self_loops, strip_trailing_characters, replace_hero
 from .weight import inverse_prob
 

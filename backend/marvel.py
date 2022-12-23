@@ -2,10 +2,10 @@
 
 import networkx as nx
 
-from service.hero import TopHeroService
+from backend.service import TopHeroService
 from .describe import GraphMode, GraphType, GraphFeatures, get_degree_dist, get_hubs
-from graph.hero_comic import get_n_heroes_per_comic
-from graph.collaborative import get_hero_collabs
+from backend.graph import get_n_heroes_per_comic
+from backend.graph import get_hero_collabs
 
 
 def features(graph: nx.Graph, graph_type: GraphType, top_n: int):

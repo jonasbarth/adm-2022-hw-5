@@ -5,7 +5,7 @@ import networkx as nx
 
 from backend.describe import GraphType
 from .preprocess import strip_trailing_characters
-from domain import Comic
+from backend.domain import Comic
 
 _ACCEPTED_TYPES = {str, pd.DataFrame}
 

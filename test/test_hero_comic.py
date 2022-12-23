@@ -1,6 +1,6 @@
 """Unit tests for the hero_comic module"""
 
-from graph import hero_comic
+from backend.graph import hero_comic
 import pytest
 import networkx as nx
 

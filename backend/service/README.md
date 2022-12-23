@@ -9,8 +9,9 @@ The service can be created from a `.csv` file or from an existing pandas DataFra
 
 ### From CSV
 Creating the service from a `.csv` file, e.g. the `edges.csv` file:
+
 ```python
-from service import TopHeroService
+from backend.service import TopHeroService
 
 hero_service = TopHeroService.create_from(data='data/edges.csv', preprocess=True)
 ```
@@ -21,8 +22,9 @@ Setting the `preprocess=True` will:
 
 ### From DataFrame
 Creating the service from a pandas DataFrame:
+
 ```python
-from service import TopHeroService
+from backend.service import TopHeroService
 import pandas as pd
 
 edges = pd.read_csv('data/edges.csv')

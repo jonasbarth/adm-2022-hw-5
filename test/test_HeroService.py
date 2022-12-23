@@ -1,7 +1,7 @@
 """Unit tests for HeroSerivce class."""
 import pytest
 
-from service.hero import TopHeroService
+from backend.service import TopHeroService
 
 
 @pytest.fixture

@@ -1,7 +1,6 @@
 """Unit tests for the collaboration module"""
-from domain.hero import Collaboration
-from graph.collaborative import get_hero_collabs, create_from
-import networkx as nx
+from backend.domain.hero import Collaboration
+from backend.graph import get_hero_collabs, create_from
 import pytest
 
 @pytest.fixture
