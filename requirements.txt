@@ -1,0 +1,7 @@
+notebook
+numpy
+pandas
+matplotlib
+networkx
+tqdm
+pytest
