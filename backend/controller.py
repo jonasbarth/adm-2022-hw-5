@@ -3,7 +3,7 @@
 import networkx as nx
 
 from .describe import GraphType
-from .marvel import features
+from .manager import features
 
 
 class Controller:
