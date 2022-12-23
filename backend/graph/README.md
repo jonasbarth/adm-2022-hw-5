@@ -2,6 +2,7 @@
 The purpose of the `graph` package is gather functions related to the Marvel hero graphs.
 
 # Creating graphs
+The functions for creating graphs all return a tuple of `(networkx.Graph, GraphType)`.
 
 ## Collaborative (First Graph)
 The `collaborative` module exposes methods for creating collaborative graphs. You can create a collaborative graph
@@ -14,7 +15,7 @@ To create a collaborative graph from a `.csv`:
 
 from backend import graph
 
-backend.graph.collaborative.create_from(data='data/hero-network.csv')
+g, graph_type = graph.collaborative.create_from(data='data/hero-network.csv')
 ```
 
 When creating the graph from a `.csv`, all of the [preprocessing](#preprocessing) steps will be applied.
@@ -28,7 +29,7 @@ from backend import graph
 import pandas as pd
 
 hero_network = pd.read_csv('data/hero-network.csv')
-backend.graph.collaborative.create_from(data=hero_network)
+g, graph_type = graph.collaborative.create_from(data=hero_network)
 ```
 
 When creating the graph from a dataframe, **NONE** of the [preprocessing](#preprocessing) steps will be applied. The data is assumed to be
@@ -66,7 +67,7 @@ To create a hero-comic graph from a `.csv`:
 
 from backend import graph
 
-backend.graph.hero_comic.create_from(nodes='data/nodes.csv', edges='data/edges.csv')
+g, graph_type = graph.hero_comic.create_from(nodes='data/nodes.csv', edges='data/edges.csv')
 ```
 
 When creating the graph from a `.csv`, all of the [preprocessing](#preprocessing) steps will be applied.
@@ -82,7 +83,7 @@ import pandas as pd
 nodes = pd.read_csv('data/nodes.csv')
 edges = pd.read_csv('data/edges.csv')
 
-backend.graph.hero_comic.create_from(nodes=nodes, edges=edges)
+g, graph_type = graph.hero_comic.create_from(nodes=nodes, edges=edges)
 ```
 
 When creating the graph from a dataframe, **NONE** of the [preprocessing](#preprocessing) steps will be applied. The data is assumed to be
