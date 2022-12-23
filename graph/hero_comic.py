@@ -81,7 +81,7 @@ def get_n_heroes_per_comic(graph: nx.Graph):
     to the heroes that appear in them.
 
     :return
-    a list of Comic namedtuples.
+    a list of Comic instances.
     """
     comics = []
     for comic in get_comic_nodes(graph):

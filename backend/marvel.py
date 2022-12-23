@@ -20,6 +20,7 @@ def features(graph: nx.Graph, graph_type: GraphType, top_n: int):
     a GraphFeatures object.
     """
     hero_collabs = {}
+    n_heroes_per_comic = []
     n_nodes = len(graph.nodes())
     hs = TopHeroService.create_from(graph.nodes())
 

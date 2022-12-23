@@ -1,4 +1,10 @@
 """A module for marvel comics."""
-from collections import namedtuple
 
-Comic = namedtuple('Comic', 'name n_heroes')
+from attr import dataclass
+
+
+@dataclass(frozen=True)
+class Comic:
+    name: str
+    n_heroes: int
+
