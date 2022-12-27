@@ -7,7 +7,7 @@ from backend.service import TopHeroService
 from .describe import GraphMode, GraphType, GraphFeatures, get_degree_dist, get_hubs
 
 
-def features(graph: nx.Graph, graph_type: GraphType, top_n: int):
+def features(graph: nx.Graph, graph_type: GraphType, top_n: int, **kwargs):
     """Extracts the features of the graph.
 
     :arg
@@ -41,3 +41,30 @@ def features(graph: nx.Graph, graph_type: GraphType, top_n: int):
     hubs = get_hubs(graph, 95)
 
     return GraphFeatures(graph_type, n_nodes, hero_collabs, n_heroes_per_comic, density, degree_dist, avg_degree, hubs, GraphMode.DENSE)
+
+
+def shortest_ordered_route(graph: nx.Graph, top_n: int, **kwargs):
+    """The shortest walk of comics that you need to read to get from the starting node to the end node.
+
+    :arg
+    graph (nx.Graph) - a networkx graph that is of type GraphType.HERO_COMIC.
+    hero_sequence (list) - a sequence of super heroes, excluding the start and end heroes.
+    start_hero (str) - the first node of the walk.
+    end_hero (str) - the last node of the walk.
+    top_n (int) - the top N heroes to consider.
+
+    :return
+    the shortest walk that goes from the start hero to the end hero and which visits the nodes in the hero sequence, in
+    order.
+    """
+    hs = TopHeroService.create_from('data/edges.csv')
+
+    top_heroes = hs.top_n(top_n)
+
+    subgraph = get_subgraph_with(graph, top_heroes)
+
+    hero_sequence, start_hero, end_hero = kwargs.get('hero_sequence'), kwargs.get('start_hero'), kwargs.get('end_hero')
+    # I could get all of the shortest paths and then filter them
+    shortest_paths = nx.all_shortest_paths(subgraph, start_hero, end_hero)
+
+    walk = shortest_paths[0]
