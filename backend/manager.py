@@ -7,17 +7,18 @@ from backend.service import TopHeroService
 from .describe import GraphMode, GraphType, GraphFeatures, get_degree_dist, get_hubs
 
 
-def features(graph: nx.Graph, graph_type: GraphType, top_n: int, **kwargs):
+def features(graph: nx.Graph, top_n: int, **kwargs):
     """Extracts the features of the graph.
 
     :arg
     graph (nx.Graph) - a networkx graph.
-    graph_type (GraphType) - the type of the graph. Either the collaborative or hero-comic graph.
     top_n (int) - the top N heroes of which data will be considered.
+    **graph_type (GraphType) - the type of the graph. Either the collaborative or hero-comic graph.
 
     :return
     a GraphFeatures object.
     """
+    graph_type = kwargs.get('graph_type')
     hero_collabs = {}
     n_heroes_per_comic = []
     n_nodes = len(graph.nodes())
@@ -49,9 +50,9 @@ def shortest_ordered_route(graph: nx.Graph, top_n: int, **kwargs):
     :arg
     graph (nx.Graph) - a networkx graph that is of type GraphType.HERO_COMIC.
     hero_sequence (list) - a sequence of super heroes, excluding the start and end heroes.
-    start_hero (str) - the first node of the walk.
-    end_hero (str) - the last node of the walk.
-    top_n (int) - the top N heroes to consider.
+    **start_hero (str) - the first node of the walk.
+    **end_hero (str) - the last node of the walk.
+    **top_n (int) - the top N heroes to consider.
 
     :return
     the shortest walk that goes from the start hero to the end hero and which visits the nodes in the hero sequence, in
@@ -68,3 +69,27 @@ def shortest_ordered_route(graph: nx.Graph, top_n: int, **kwargs):
     shortest_paths = nx.all_shortest_paths(subgraph, start_hero, end_hero)
 
     walk = shortest_paths[0]
+
+
+def disconnecting_graphs(graph: nx.Graph, top_n: int, **kwargs):
+    """Finds the minimum number of links (by considering their weights) required to disconnect the original graph in two
+    disconnected subgraphs: G_a and G_b.
+
+    :arg
+    graph (nx.Graph) - a networkx graph of type GraphType.COLLABORATIVE, where heroes are connected to heroes.
+    top_n (int) - the top N heroes to consider.
+    **hero_a (str) - a hero to which the first subgraph is related.
+    **hero_b (str) - a hero to which the second subgraph is related.
+
+    :return
+    The minimum number of links required to disconnect the original graph in two disconnected subgraphs.
+    """
+    hs = TopHeroService.create_from('data/edges.csv')
+    top_heroes = hs.top_n(top_n)
+    subgraph = get_subgraph_with(graph, top_heroes)
+
+    hero_a = kwargs.get('hero_a')
+    hero_b = kwargs.get('hero_b')
+
+    # I need to look at the edges, and find the set of edges that once I remove it, will give me two subgraphs with hero_a in the first and hero_b in the second.
+    # the set of nodes should be the cheapest set possible, considering all of the weights.
