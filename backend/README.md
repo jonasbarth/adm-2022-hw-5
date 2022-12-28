@@ -1,4 +1,5 @@
-# Backend
+class GraphType(object):
+pass# Backend
 The purpose of this package is to gather functionality for the backend part of the Marvel Hero Graphs. The backend exposes
 modules that allow you to:
 
@@ -63,12 +64,13 @@ In the `run` method, the dictionary is then accessed and the function correspond
 
 ## How to use
 To use the controller:
+
 ```python
 import backend.graph.collaborative
 from backend import Controller
 
 hero_graph, graph_type = backend.graph.hero_comic.create_from(nodes='data/nodes.csv', edges='data/edges.csv')
 
-controller = Controller(hero_graph, graph_type) # create the controller with the hero graph
-controller.run('features') # runs the features function
+controller = Controller(hero_graph)  # create the controller with the hero graph
+controller.run('features', top_n=100, graph_type=graph_type)  # runs the features function with the graph_type as a kwargs parameter
 ```
