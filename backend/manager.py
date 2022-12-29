@@ -82,14 +82,33 @@ def disconnecting_graphs(graph: nx.Graph, top_n: int, **kwargs):
     **hero_b (str) - a hero to which the second subgraph is related.
 
     :return
-    The minimum number of links required to disconnect the original graph in two disconnected subgraphs.
+    (float, int, nx.Graph, nx.Graph) - The cumulative weight of the removed edges, the number of removed edges, the two
+    disconnected subgraphs.
     """
-    hs = TopHeroService.create_from('data/edges.csv')
-    top_heroes = hs.top_n(top_n)
-    subgraph = get_subgraph_with(graph, top_heroes)
+    def edge_is_bridge(edge, graph_a, graph_b):
+        start, end = edge
+        return (start in graph_a and end in graph_b) or (start in graph_b and end in graph_a)
 
     hero_a = kwargs.get('hero_a')
     hero_b = kwargs.get('hero_b')
 
-    # I need to look at the edges, and find the set of edges that once I remove it, will give me two subgraphs with hero_a in the first and hero_b in the second.
-    # the set of nodes should be the cheapest set possible, considering all of the weights.
+    hs = TopHeroService.create_from('data/edges.csv')
+    top_heroes = hs.top_n(top_n)
+    subgraph = nx.subgraph(graph, top_heroes)
+
+    if hero_a not in top_heroes:
+        raise ValueError(f'The provided hero_a: {hero_a} is not part of the top_n: {top_n} heroes.')
+
+    if hero_b not in top_heroes:
+        raise ValueError(f'The provided hero_b: {hero_b} is not part of the top_n: {top_n} heroes.')
+
+    # First, find the min cut max flow using the networkx API. This will return the max flow (min possible weight) and
+    # the nodes of the two subgraphs
+    weight, nodes = nx.minimum_cut(subgraph, hero_a, hero_b, capacity='weight')
+    nodes_a, nodes_b = nodes
+
+    graph_a, graph_b = nx.subgraph(subgraph, nodes_a), nx.subgraph(subgraph, nodes_b)
+
+    bridges = list(filter(lambda edge: edge_is_bridge(edge, graph_a, graph_b), subgraph.edges))
+
+    return weight, len(bridges), graph_a, graph_b
