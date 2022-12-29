@@ -31,6 +31,6 @@ class Controller:
         the result of the function that was run.
         """
         if identifier not in self.funcs:
-            raise ValueError(f'The identifier {identifier} does not map to an existing function.')
+            raise ValueError(f'The identifier \"{identifier}\" does not map to an existing function.')
 
         return self.funcs[identifier](self.graph, top_n, **kwargs)
