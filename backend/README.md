@@ -1,5 +1,4 @@
-class GraphType(object):
-pass# Backend
+# Backend
 The purpose of this package is to gather functionality for the backend part of the Marvel Hero Graphs. The backend exposes
 modules that allow you to:
 
