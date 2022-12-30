@@ -7,7 +7,7 @@ import networkx as nx
 @pytest.fixture
 def graph():
     g = nx.Graph()
-    g.add_nodes_from([('Civil War', {'type': 'comic'}), ('Captain America', {'type': 'hero'})])
+    g.add_nodes_from([('Civil War', {'type': 'comic'}), ('Captain America', {'type': 'hero'}), ('Iron Man', {'type': 'hero'})])
     g.add_edge('Civil War', 'Captain America')
 
     return g
@@ -26,3 +26,12 @@ def test_that_get_comic_nodes_correct(graph):
     comics = hero_comic.get_comic_nodes(graph)
 
     assert comics == expected_comics
+
+
+def test_that_get_subgraph_is_correct(graph):
+    heroes = ['Captain America']
+    expected_nodes = sorted(heroes + ['Civil War'])
+
+    subgraph = hero_comic.get_subgraph_with(graph, heroes)
+
+    assert sorted(list(subgraph.nodes())) == expected_nodes

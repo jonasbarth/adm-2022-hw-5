@@ -1,4 +1,5 @@
 """A python module with functions for constructing a comic-hero graph."""
+import itertools
 
 import pandas as pd
 import networkx as nx
@@ -62,6 +63,21 @@ def create_from(nodes=None, edges=None):
         graph.add_edges_from(edges)
 
         return graph, GraphType.HERO_COMIC
+
+
+def get_subgraph_with(graph: nx.Graph, heroes: iter):
+    """Gets a subgraph of the given graph with the heroes and their neighbours.
+
+    :arg
+    graph (nx.Graph) - a networkx graph consisting of heroes that are connected to comics.
+    heroes (iter) - an iterable of heroes that should be included in the subgraph.
+
+    :return
+    a networkx graph that is a subgraph of the given graph with all the provided heroes and the comics they appear in.
+    """
+    comics = list(itertools.chain(*set(graph.neighbors(hero) for hero in heroes)))
+    subgraph = graph.subgraph(heroes + comics)
+    return subgraph
 
 
 def get_comic_nodes(graph: nx.Graph):
