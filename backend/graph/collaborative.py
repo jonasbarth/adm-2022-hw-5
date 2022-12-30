@@ -1,4 +1,5 @@
 """Python module for creating the collaborative hero graph."""
+import logging
 from collections import Counter
 
 import networkx as nx
@@ -7,12 +8,17 @@ import pandas as pd
 from backend.describe import GraphType
 from backend.domain.hero import Collaboration
 from .preprocess import remove_self_loops, strip_trailing_characters, replace_hero
-from .weight import inverse_prob
+from .weight import reciprocal_prop, max_prop
 
 _ACCEPTED_TYPES = {str, pd.DataFrame}
 
 
-def create_from(data=None, weight=inverse_prob):
+logging.basicConfig(format='%(asctime)s %(name)s - %(message)s', datefmt='%d-%b-%y %H:%M:%S')
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+
+
+def create_from(data=None, weight=max_prop):
     """Creates a collaborative hero graph.
 
     Only specify either the path OR the data parameter, NOT both.
@@ -33,16 +39,17 @@ def create_from(data=None, weight=inverse_prob):
         remove_self_loops(data)
         strip_trailing_characters(data)
         replace_hero(data, 'SPIDER-MAN/PETER PAR', 'SPIDER-MAN/PETER PARKER')
-
-        return _create_graph_from_data(data), GraphType.COLLABORATIVE
+        logger.info(f'Creating collaborative hero graph from a csv file.')
+        return _create_graph_from_data(data, weight), GraphType.COLLABORATIVE
 
     if isinstance(data, pd.DataFrame):
-        return _create_graph_from_data(data), GraphType.COLLABORATIVE
+        logger.info(f'Creating collaborative hero graph from a pandas DataFrame.')
+        return _create_graph_from_data(data, weight), GraphType.COLLABORATIVE
 
 
-def _create_graph_from_data(data, weight=inverse_prob):
+def _create_graph_from_data(data, weight=reciprocal_prop):
     multi_graph = _create_multi_graph_from_data(data)
-    return _create_weighted_graph_from_multi_graph(multi_graph)
+    return _create_weighted_graph_from_multi_graph(multi_graph, weight)
 
 
 def _create_multi_graph_from_data(data):
@@ -66,7 +73,7 @@ def _create_multi_graph_from_data(data):
     return graph
 
 
-def _create_weighted_graph_from_multi_graph(multi_graph, weight=inverse_prob):
+def _create_weighted_graph_from_multi_graph(multi_graph, weight=reciprocal_prop):
     """Creates an undirected, weighted graph from an existing multigraph.
 
     :arg
@@ -80,7 +87,7 @@ def _create_weighted_graph_from_multi_graph(multi_graph, weight=inverse_prob):
         node_n_edges = Counter(multi_graph.edges(node))
 
         for edge, n in node_n_edges.items():
-            weighted_edges.append((*edge, {'weight': weight(*edge, n), 'n_collabs': n}))
+            weighted_edges.append((*edge, {'weight': weight(*edge, n, multi_graph), 'n_collabs': n}))
 
     weighted_graph = nx.Graph()
     weighted_graph.add_nodes_from(multi_graph.nodes())

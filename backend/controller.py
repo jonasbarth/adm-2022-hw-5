@@ -1,8 +1,13 @@
 """A controller module for the Marvel Hero graph."""
+import logging
 
 import networkx as nx
 
 from .manager import features, shortest_ordered_route, disconnecting_graphs
+
+logging.basicConfig(format='%(asctime)s - %(message)s', datefmt='%d-%b-%y %H:%M:%S')
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 
 class Controller:
@@ -33,4 +38,5 @@ class Controller:
         if identifier not in self.funcs:
             raise ValueError(f'The identifier \"{identifier}\" does not map to an existing function.')
 
+        logger.info(f'Calling function \"{identifier}\".')
         return self.funcs[identifier](self.graph, top_n, **kwargs)
