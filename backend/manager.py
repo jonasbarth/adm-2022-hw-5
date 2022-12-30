@@ -5,6 +5,7 @@ import networkx as nx
 from backend.graph import get_n_heroes_per_comic, get_subgraph_with, get_hero_collabs
 from backend.service import TopHeroService
 from .describe import GraphMode, GraphType, GraphFeatures, get_degree_dist, get_hubs
+from .domain import Disconnection
 
 
 def features(graph: nx.Graph, top_n: int, **kwargs):
@@ -111,4 +112,4 @@ def disconnecting_graphs(graph: nx.Graph, top_n: int, **kwargs):
 
     bridges = list(filter(lambda edge: edge_is_bridge(edge, graph_a, graph_b), subgraph.edges))
 
-    return weight, len(bridges), graph_a, graph_b
+    return Disconnection(bridges, weight, subgraph, hero_a, hero_b, graph_a, graph_b)
