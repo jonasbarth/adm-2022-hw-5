@@ -39,4 +39,8 @@ class Controller:
             raise ValueError(f'The identifier \"{identifier}\" does not map to an existing function.')
 
         logger.info(f'Calling function \"{identifier}\".')
-        return self.funcs[identifier](self.graph, top_n, **kwargs)
+        result = self.funcs[identifier](self.graph, top_n, **kwargs)
+
+        logger.info(f'Received result from function \"{identifier}\".')
+        return result
+
