@@ -36,12 +36,12 @@ def disconnected_graph(disc: Disconnection):
     disc (Disconnection) - the disconnection to be visualised.
 
     :return
-    (str, plt.figure, plt.figure) - a message about the number of edges that were removed, a plot of the original grpah,
-    a plot of the original graph after the links were removed with the two hero nodes highlighted.
+    (str, str) - the paths for the generated html for the original and disconnected graphs.
     """
 
     target_directory = "doc/visualisations/disconnected"
-
+    original_graph_file = f'{target_directory}/original_graph.html'
+    disconnected_graphs_file = f'{target_directory}/disconnected_graphs.html'
 
     os.makedirs(target_directory, exist_ok=True)
 
@@ -72,7 +72,8 @@ def disconnected_graph(disc: Disconnection):
     nt.from_nx(disc.original_graph, node_size_transf=node_size)
     nt.show_buttons(filter_=['nodes'])
 
-    nt.write_html(f'{target_directory}/original_graph.html')
+    nt.write_html(original_graph_file)
+    logger.info(f"Successfully wrote original graph to: {original_graph_file}.")
 
 
     nt = Network(height=f'{screen_height}px', width='100%')
@@ -97,7 +98,8 @@ def disconnected_graph(disc: Disconnection):
     nt.toggle_physics(False)
     nt.show_buttons(filter_=['nodes'])
 
-    nt.write_html(f'{target_directory}/disconnected_graphs.html')
+    nt.write_html(disconnected_graphs_file)
 
-    logger.info("Successfully wrote html.")
+    logger.info(f"Successfully wrote disconnected graphs to: {disconnected_graphs_file}.")
 
+    return original_graph_file, disconnected_graphs_file
