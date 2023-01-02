@@ -20,6 +20,12 @@ def features(graph: nx.Graph, top_n: int, **kwargs):
     a GraphFeatures object.
     """
     graph_type = kwargs.get('graph_type')
+
+    if not graph_type:
+        raise ValueError(f'You must specify the graph_type kwargs parameter. It is: {graph_type}.')
+    if not isinstance(graph_type, GraphType):
+        raise ValueError(f'The provided graph_type kwargs parameter must be of type GraphType. type(graph_type): {type(graph_type)}.')
+
     hero_collabs = {}
     n_heroes_per_comic = []
     n_nodes = len(graph.nodes())
