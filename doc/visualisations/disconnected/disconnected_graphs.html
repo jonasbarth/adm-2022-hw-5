@@ -1,0 +1,170 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+            <script src="lib/bindings/utils.js"></script>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/dist/vis-network.min.css" integrity="sha512-WgxfT5LWjfszlPHXRmBWHkV2eceiWTOBvrKCNbdgDYTHrT2AeLCGbF4sZlZw3UMN3WtL0tGUoIAKsu8mllg/XA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.js" integrity="sha512-LnvoEWDFrqGHlHmDD2101OrLcbsfkrzoSpvtSQtxK3RMnRV0eOkhhBN2dXHKRrUU8p2DGRTk35n4O8nWSVe1mQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            
+        
+<center>
+<h1></h1>
+</center>
+
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
+        <link
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6"
+          crossorigin="anonymous"
+        />
+        <script
+          src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+          crossorigin="anonymous"
+        ></script>
+
+
+        <center>
+          <h1></h1>
+        </center>
+        <style type="text/css">
+
+             #mynetwork {
+                 width: 100%;
+                 height: 1080px;
+                 background-color: #ffffff;
+                 border: 1px solid lightgray;
+                 position: relative;
+                 float: left;
+             }
+
+             
+
+             
+             #config {
+                 float: left;
+                 width: 400px;
+                 height: 600px;
+             }
+             
+
+             
+        </style>
+    </head>
+
+
+    <body>
+        <div class="card" style="width: 100%">
+            
+            
+            <div id="mynetwork" class="card-body"></div>
+        </div>
+
+        
+        
+            <div id="config"></div>
+        
+
+        <script type="text/javascript">
+
+              // initialize global variables.
+              var edges;
+              var nodes;
+              var allNodes;
+              var allEdges;
+              var nodeColors;
+              var originalNodes;
+              var network;
+              var container;
+              var options, data;
+              var filter = {
+                  item : '',
+                  property : '',
+                  value : []
+              };
+
+              
+
+              
+
+              // This method is responsible for drawing the graph, returns the drawn network
+              function drawGraph() {
+                  var container = document.getElementById('mynetwork');
+
+                  
+
+                  // parsing and collecting nodes and edges from the python
+                  nodes = new vis.DataSet([{"color": "blue", "id": "HUMAN TORCH/JOHNNY S", "label": "HUMAN TORCH/JOHNNY S", "physics": false, "shape": "dot", "size": 25, "x": -308.1693215290287, "y": 316.7574403997482}, {"color": "blue", "id": "INVISIBLE WOMAN/SUE", "label": "INVISIBLE WOMAN/SUE", "physics": false, "shape": "dot", "size": 25, "x": 320.6620556908751, "y": 306.7581891763029}, {"color": "blue", "id": "ANT-MAN/DR. HENRY J.", "label": "ANT-MAN/DR. HENRY J.", "physics": false, "shape": "dot", "size": 25, "x": 157.11617967089302, "y": 74.06637486663061}, {"color": "blue", "id": "IRON MAN/TONY STARK", "label": "IRON MAN/TONY STARK", "physics": false, "shape": "dot", "size": 25, "x": 73.00067696814698, "y": -188.48611794233122}, {"color": "blue", "id": "MR. FANTASTIC/REED R", "label": "MR. FANTASTIC/REED R", "physics": false, "shape": "dot", "size": 25, "x": -362.98479032160697, "y": -351.1175307049052}, {"color": "blue", "id": "PROFESSOR X/CHARLES", "label": "PROFESSOR X/CHARLES", "physics": false, "shape": "dot", "size": 25, "x": 60.66776558038825, "y": 271.82874841959494}, {"color": "blue", "id": "BEAST/HENRY \u0026HANK\u0026 P", "label": "BEAST/HENRY \u0026HANK\u0026 P", "physics": false, "shape": "dot", "size": 25, "x": -438.65986549618754, "y": -181.59946297493343}, {"color": "blue", "id": "THOR/DR. DONALD BLAK", "label": "THOR/DR. DONALD BLAK", "physics": false, "shape": "dot", "size": 25, "x": -274.5163918142635, "y": -22.28375783560379}, {"color": "blue", "id": "THING/BENJAMIN J. GR", "label": "THING/BENJAMIN J. GR", "physics": false, "shape": "dot", "size": 25, "x": 371.231945897958, "y": 142.9811021632453}, {"color": "blue", "id": "CAPTAIN AMERICA", "label": "CAPTAIN AMERICA", "physics": false, "shape": "dot", "size": 25, "x": 57.066721676154835, "y": -377.535883577107}, {"color": "blue", "id": "JAMESON, J. JONAH", "label": "JAMESON, J. JONAH", "physics": false, "shape": "dot", "size": 25, "x": -486.0333114486773, "y": 6.681519252735441}, {"color": "blue", "id": "DAREDEVIL/MATT MURDO", "label": "DAREDEVIL/MATT MURDO", "physics": false, "shape": "dot", "size": 25, "x": -68.44747101121284, "y": 4.086865618110165}, {"color": "blue", "id": "CYCLOPS/SCOTT SUMMER", "label": "CYCLOPS/SCOTT SUMMER", "physics": false, "shape": "dot", "size": 25, "x": -111.05676851892267, "y": 456.64596923854725}, {"color": "blue", "id": "SUB-MARINER/NAMOR MA", "label": "SUB-MARINER/NAMOR MA", "physics": false, "shape": "dot", "size": 25, "x": -402.99777671886835, "y": 164.47546417549503}, {"color": "blue", "id": "WASP/JANET VAN DYNE", "label": "WASP/JANET VAN DYNE", "physics": false, "shape": "dot", "size": 25, "x": -201.61980571173672, "y": -455.10649442253674}, {"color": "blue", "id": "DR. STRANGE/STEPHEN", "label": "DR. STRANGE/STEPHEN", "physics": false, "shape": "dot", "size": 25, "x": 148.57807811993882, "y": 426.49964214407214}, {"color": "blue", "id": "HULK/DR. ROBERT BRUC", "label": "HULK/DR. ROBERT BRUC", "physics": false, "shape": "dot", "size": 25, "x": 348.6140765146366, "y": -326.0361067902415}, {"color": "blue", "id": "VISION", "label": "VISION", "physics": false, "shape": "dot", "size": 25, "x": 276.7287472396537, "y": -107.68885862184358}, {"color": "blue", "id": "SCARLET WITCH/WANDA", "label": "SCARLET WITCH/WANDA", "physics": false, "shape": "dot", "size": 25, "x": -173.26254202995275, "y": -243.11439685983663}, {"color": "blue", "id": "HAWK", "label": "HAWK", "physics": false, "shape": "dot", "size": 25, "x": 464.9699254723345, "y": -175.9102673297607}, {"color": "blue", "id": "FURY, COL. NICHOLAS", "label": "FURY, COL. NICHOLAS", "physics": false, "shape": "dot", "size": 25, "x": -140.54644818318465, "y": 231.36946306046687}, {"color": "red", "id": "WOLVERINE/LOGAN", "label": "WOLVERINE/LOGAN", "physics": false, "shape": "dot", "size": 25, "x": 487.2490244891203, "y": 25.74988690258928}, {"color": "blue", "id": "STORM/ORORO MUNROE S", "label": "STORM/ORORO MUNROE S", "physics": false, "shape": "dot", "size": 25, "x": -18.540454620458398, "y": -533.792800138041}, {"color": "blue", "id": "WATSON-PARKER, MARY", "label": "WATSON-PARKER, MARY", "physics": false, "shape": "dot", "size": 25, "x": 227.20998531464596, "y": -465.22898822039576}, {"color": "red", "id": "SPIDER-MAN/PETER PARKER", "label": "SPIDER-MAN/PETER PARKER", "physics": false, "shape": "dot", "size": 25, "x": -6.260235230645348, "y": 999.9999999999999}]);
+                  edges = new vis.DataSet([{"from": "HUMAN TORCH/JOHNNY S", "n_collabs": 694, "to": "INVISIBLE WOMAN/SUE", "width": 1}, {"from": "HUMAN TORCH/JOHNNY S", "n_collabs": 59, "to": "ANT-MAN/DR. HENRY J.", "width": 1}, {"from": "HUMAN TORCH/JOHNNY S", "n_collabs": 108, "to": "IRON MAN/TONY STARK", "width": 1}, {"from": "HUMAN TORCH/JOHNNY S", "n_collabs": 713, "to": "MR. FANTASTIC/REED R", "width": 1}, {"from": "HUMAN TORCH/JOHNNY S", "n_collabs": 60, "to": "PROFESSOR X/CHARLES", "width": 1}, {"from": "HUMAN TORCH/JOHNNY S", "n_collabs": 57, "to": "BEAST/HENRY \u0026HANK\u0026 P", "width": 1}, {"from": "HUMAN TORCH/JOHNNY S", "n_collabs": 124, "to": "THOR/DR. DONALD BLAK", "width": 1}, {"from": "HUMAN TORCH/JOHNNY S", "n_collabs": 744, "to": "THING/BENJAMIN J. GR", "width": 1}, {"from": "HUMAN TORCH/JOHNNY S", "n_collabs": 158, "to": "CAPTAIN AMERICA", "width": 1}, {"from": "HUMAN TORCH/JOHNNY S", "n_collabs": 34, "to": "JAMESON, J. JONAH", "width": 1}, {"from": "HUMAN TORCH/JOHNNY S", "n_collabs": 64, "to": "DAREDEVIL/MATT MURDO", "width": 1}, {"from": "HUMAN TORCH/JOHNNY S", "n_collabs": 68, "to": "CYCLOPS/SCOTT SUMMER", "width": 1}, {"from": "HUMAN TORCH/JOHNNY S", "n_collabs": 92, "to": "SUB-MARINER/NAMOR MA", "width": 1}, {"from": "HUMAN TORCH/JOHNNY S", "n_collabs": 90, "to": "WASP/JANET VAN DYNE", "width": 1}, {"from": "HUMAN TORCH/JOHNNY S", "n_collabs": 50, "to": "DR. STRANGE/STEPHEN", "width": 1}, {"from": "HUMAN TORCH/JOHNNY S", "n_collabs": 99, "to": "HULK/DR. ROBERT BRUC", "width": 1}, {"from": "HUMAN TORCH/JOHNNY S", "n_collabs": 98, "to": "VISION", "width": 1}, {"from": "HUMAN TORCH/JOHNNY S", "n_collabs": 88, "to": "SCARLET WITCH/WANDA", "width": 1}, {"from": "HUMAN TORCH/JOHNNY S", "n_collabs": 67, "to": "HAWK", "width": 1}, {"from": "HUMAN TORCH/JOHNNY S", "n_collabs": 31, "to": "FURY, COL. NICHOLAS", "width": 1}, {"from": "HUMAN TORCH/JOHNNY S", "n_collabs": 67, "to": "WOLVERINE/LOGAN", "width": 1}, {"from": "HUMAN TORCH/JOHNNY S", "n_collabs": 60, "to": "STORM/ORORO MUNROE S", "width": 1}, {"from": "HUMAN TORCH/JOHNNY S", "n_collabs": 15, "to": "WATSON-PARKER, MARY", "width": 1}, {"from": "DR. STRANGE/STEPHEN", "n_collabs": 47, "to": "INVISIBLE WOMAN/SUE", "width": 1}, {"from": "DR. STRANGE/STEPHEN", "n_collabs": 35, "to": "ANT-MAN/DR. HENRY J.", "width": 1}, {"from": "DR. STRANGE/STEPHEN", "n_collabs": 52, "to": "IRON MAN/TONY STARK", "width": 1}, {"from": "DR. STRANGE/STEPHEN", "n_collabs": 48, "to": "MR. FANTASTIC/REED R", "width": 1}, {"from": "DR. STRANGE/STEPHEN", "n_collabs": 25, "to": "PROFESSOR X/CHARLES", "width": 1}, {"from": "DR. STRANGE/STEPHEN", "n_collabs": 154, "to": "HULK/DR. ROBERT BRUC", "width": 1}, {"from": "DR. STRANGE/STEPHEN", "n_collabs": 62, "to": "SCARLET WITCH/WANDA", "width": 1}, {"from": "DR. STRANGE/STEPHEN", "n_collabs": 11, "to": "JAMESON, J. JONAH", "width": 1}, {"from": "DR. STRANGE/STEPHEN", "n_collabs": 37, "to": "DAREDEVIL/MATT MURDO", "width": 1}, {"from": "DR. STRANGE/STEPHEN", "n_collabs": 67, "to": "CAPTAIN AMERICA", "width": 1}, {"from": "DR. STRANGE/STEPHEN", "n_collabs": 55, "to": "THING/BENJAMIN J. GR", "width": 1}, {"from": "DR. STRANGE/STEPHEN", "n_collabs": 23, "to": "CYCLOPS/SCOTT SUMMER", "width": 1}, {"from": "DR. STRANGE/STEPHEN", "n_collabs": 92, "to": "SUB-MARINER/NAMOR MA", "width": 1}, {"from": "DR. STRANGE/STEPHEN", "n_collabs": 41, "to": "THOR/DR. DONALD BLAK", "width": 1}, {"from": "DR. STRANGE/STEPHEN", "n_collabs": 50, "to": "BEAST/HENRY \u0026HANK\u0026 P", "width": 1}, {"from": "DR. STRANGE/STEPHEN", "n_collabs": 38, "to": "WASP/JANET VAN DYNE", "width": 1}, {"from": "DR. STRANGE/STEPHEN", "n_collabs": 58, "to": "VISION", "width": 1}, {"from": "DR. STRANGE/STEPHEN", "n_collabs": 35, "to": "HAWK", "width": 1}, {"from": "DR. STRANGE/STEPHEN", "n_collabs": 22, "to": "STORM/ORORO MUNROE S", "width": 1}, {"from": "DR. STRANGE/STEPHEN", "n_collabs": 32, "to": "WOLVERINE/LOGAN", "width": 1}, {"from": "DR. STRANGE/STEPHEN", "n_collabs": 18, "to": "FURY, COL. NICHOLAS", "width": 1}, {"from": "DR. STRANGE/STEPHEN", "n_collabs": 7, "to": "WATSON-PARKER, MARY", "width": 1}, {"from": "CAPTAIN AMERICA", "n_collabs": 149, "to": "INVISIBLE WOMAN/SUE", "width": 1}, {"from": "CAPTAIN AMERICA", "n_collabs": 295, "to": "ANT-MAN/DR. HENRY J.", "width": 1}, {"from": "CAPTAIN AMERICA", "n_collabs": 446, "to": "IRON MAN/TONY STARK", "width": 1}, {"from": "CAPTAIN AMERICA", "n_collabs": 166, "to": "MR. FANTASTIC/REED R", "width": 1}, {"from": "CAPTAIN AMERICA", "n_collabs": 61, "to": "PROFESSOR X/CHARLES", "width": 1}, {"from": "CAPTAIN AMERICA", "n_collabs": 168, "to": "THING/BENJAMIN J. GR", "width": 1}, {"from": "CAPTAIN AMERICA", "n_collabs": 32, "to": "JAMESON, J. JONAH", "width": 1}, {"from": "CAPTAIN AMERICA", "n_collabs": 374, "to": "SCARLET WITCH/WANDA", "width": 1}, {"from": "CAPTAIN AMERICA", "n_collabs": 66, "to": "CYCLOPS/SCOTT SUMMER", "width": 1}, {"from": "CAPTAIN AMERICA", "n_collabs": 71, "to": "DAREDEVIL/MATT MURDO", "width": 1}, {"from": "CAPTAIN AMERICA", "n_collabs": 111, "to": "HULK/DR. ROBERT BRUC", "width": 1}, {"from": "CAPTAIN AMERICA", "n_collabs": 57, "to": "STORM/ORORO MUNROE S", "width": 1}, {"from": "CAPTAIN AMERICA", "n_collabs": 18, "to": "WATSON-PARKER, MARY", "width": 1}, {"from": "CAPTAIN AMERICA", "n_collabs": 169, "to": "BEAST/HENRY \u0026HANK\u0026 P", "width": 1}, {"from": "CAPTAIN AMERICA", "n_collabs": 158, "to": "SUB-MARINER/NAMOR MA", "width": 1}, {"from": "CAPTAIN AMERICA", "n_collabs": 155, "to": "FURY, COL. NICHOLAS", "width": 1}, {"from": "CAPTAIN AMERICA", "n_collabs": 385, "to": "VISION", "width": 1}, {"from": "CAPTAIN AMERICA", "n_collabs": 322, "to": "HAWK", "width": 1}, {"from": "CAPTAIN AMERICA", "n_collabs": 78, "to": "WOLVERINE/LOGAN", "width": 1}, {"from": "CAPTAIN AMERICA", "n_collabs": 386, "to": "THOR/DR. DONALD BLAK", "width": 1}, {"from": "CAPTAIN AMERICA", "n_collabs": 384, "to": "WASP/JANET VAN DYNE", "width": 1}, {"from": "THING/BENJAMIN J. GR", "n_collabs": 668, "to": "INVISIBLE WOMAN/SUE", "width": 1}, {"from": "THING/BENJAMIN J. GR", "n_collabs": 73, "to": "ANT-MAN/DR. HENRY J.", "width": 1}, {"from": "THING/BENJAMIN J. GR", "n_collabs": 129, "to": "IRON MAN/TONY STARK", "width": 1}, {"from": "THING/BENJAMIN J. GR", "n_collabs": 708, "to": "MR. FANTASTIC/REED R", "width": 1}, {"from": "THING/BENJAMIN J. GR", "n_collabs": 63, "to": "PROFESSOR X/CHARLES", "width": 1}, {"from": "THING/BENJAMIN J. GR", "n_collabs": 71, "to": "CYCLOPS/SCOTT SUMMER", "width": 1}, {"from": "THING/BENJAMIN J. GR", "n_collabs": 67, "to": "BEAST/HENRY \u0026HANK\u0026 P", "width": 1}, {"from": "THING/BENJAMIN J. GR", "n_collabs": 99, "to": "HULK/DR. ROBERT BRUC", "width": 1}, {"from": "THING/BENJAMIN J. GR", "n_collabs": 76, "to": "WOLVERINE/LOGAN", "width": 1}, {"from": "THING/BENJAMIN J. GR", "n_collabs": 101, "to": "VISION", "width": 1}, {"from": "THING/BENJAMIN J. GR", "n_collabs": 69, "to": "STORM/ORORO MUNROE S", "width": 1}, {"from": "THING/BENJAMIN J. GR", "n_collabs": 99, "to": "SCARLET WITCH/WANDA", "width": 1}, {"from": "THING/BENJAMIN J. GR", "n_collabs": 126, "to": "THOR/DR. DONALD BLAK", "width": 1}, {"from": "THING/BENJAMIN J. GR", "n_collabs": 29, "to": "JAMESON, J. JONAH", "width": 1}, {"from": "THING/BENJAMIN J. GR", "n_collabs": 61, "to": "DAREDEVIL/MATT MURDO", "width": 1}, {"from": "THING/BENJAMIN J. GR", "n_collabs": 102, "to": "SUB-MARINER/NAMOR MA", "width": 1}, {"from": "THING/BENJAMIN J. GR", "n_collabs": 89, "to": "WASP/JANET VAN DYNE", "width": 1}, {"from": "THING/BENJAMIN J. GR", "n_collabs": 44, "to": "FURY, COL. NICHOLAS", "width": 1}, {"from": "THING/BENJAMIN J. GR", "n_collabs": 80, "to": "HAWK", "width": 1}, {"from": "THING/BENJAMIN J. GR", "n_collabs": 14, "to": "WATSON-PARKER, MARY", "width": 1}, {"from": "CYCLOPS/SCOTT SUMMER", "n_collabs": 46, "to": "INVISIBLE WOMAN/SUE", "width": 1}, {"from": "CYCLOPS/SCOTT SUMMER", "n_collabs": 27, "to": "ANT-MAN/DR. HENRY J.", "width": 1}, {"from": "CYCLOPS/SCOTT SUMMER", "n_collabs": 28, "to": "IRON MAN/TONY STARK", "width": 1}, {"from": "CYCLOPS/SCOTT SUMMER", "n_collabs": 58, "to": "MR. FANTASTIC/REED R", "width": 1}, {"from": "CYCLOPS/SCOTT SUMMER", "n_collabs": 308, "to": "PROFESSOR X/CHARLES", "width": 1}, {"from": "CYCLOPS/SCOTT SUMMER", "n_collabs": 10, "to": "JAMESON, J. JONAH", "width": 1}, {"from": "CYCLOPS/SCOTT SUMMER", "n_collabs": 45, "to": "SCARLET WITCH/WANDA", "width": 1}, {"from": "CYCLOPS/SCOTT SUMMER", "n_collabs": 277, "to": "WOLVERINE/LOGAN", "width": 1}, {"from": "CYCLOPS/SCOTT SUMMER", "n_collabs": 40, "to": "VISION", "width": 1}, {"from": "CYCLOPS/SCOTT SUMMER", "n_collabs": 261, "to": "STORM/ORORO MUNROE S", "width": 1}, {"from": "CYCLOPS/SCOTT SUMMER", "n_collabs": 53, "to": "HULK/DR. ROBERT BRUC", "width": 1}, {"from": "CYCLOPS/SCOTT SUMMER", "n_collabs": 317, "to": "BEAST/HENRY \u0026HANK\u0026 P", "width": 1}, {"from": "CYCLOPS/SCOTT SUMMER", "n_collabs": 23, "to": "DAREDEVIL/MATT MURDO", "width": 1}, {"from": "CYCLOPS/SCOTT SUMMER", "n_collabs": 38, "to": "WASP/JANET VAN DYNE", "width": 1}, {"from": "CYCLOPS/SCOTT SUMMER", "n_collabs": 40, "to": "THOR/DR. DONALD BLAK", "width": 1}, {"from": "CYCLOPS/SCOTT SUMMER", "n_collabs": 15, "to": "SUB-MARINER/NAMOR MA", "width": 1}, {"from": "CYCLOPS/SCOTT SUMMER", "n_collabs": 32, "to": "HAWK", "width": 1}, {"from": "CYCLOPS/SCOTT SUMMER", "n_collabs": 16, "to": "FURY, COL. NICHOLAS", "width": 1}, {"from": "CYCLOPS/SCOTT SUMMER", "n_collabs": 3, "to": "WATSON-PARKER, MARY", "width": 1}, {"from": "SUB-MARINER/NAMOR MA", "n_collabs": 102, "to": "INVISIBLE WOMAN/SUE", "width": 1}, {"from": "SUB-MARINER/NAMOR MA", "n_collabs": 53, "to": "ANT-MAN/DR. HENRY J.", "width": 1}, {"from": "SUB-MARINER/NAMOR MA", "n_collabs": 71, "to": "IRON MAN/TONY STARK", "width": 1}, {"from": "SUB-MARINER/NAMOR MA", "n_collabs": 86, "to": "MR. FANTASTIC/REED R", "width": 1}, {"from": "SUB-MARINER/NAMOR MA", "n_collabs": 11, "to": "PROFESSOR X/CHARLES", "width": 1}, {"from": "SUB-MARINER/NAMOR MA", "n_collabs": 9, "to": "JAMESON, J. JONAH", "width": 1}, {"from": "SUB-MARINER/NAMOR MA", "n_collabs": 59, "to": "SCARLET WITCH/WANDA", "width": 1}, {"from": "SUB-MARINER/NAMOR MA", "n_collabs": 16, "to": "DAREDEVIL/MATT MURDO", "width": 1}, {"from": "SUB-MARINER/NAMOR MA", "n_collabs": 105, "to": "HULK/DR. ROBERT BRUC", "width": 1}, {"from": "SUB-MARINER/NAMOR MA", "n_collabs": 11, "to": "STORM/ORORO MUNROE S", "width": 1}, {"from": "SUB-MARINER/NAMOR MA", "n_collabs": 5, "to": "WATSON-PARKER, MARY", "width": 1}, {"from": "SUB-MARINER/NAMOR MA", "n_collabs": 40, "to": "BEAST/HENRY \u0026HANK\u0026 P", "width": 1}, {"from": "SUB-MARINER/NAMOR MA", "n_collabs": 70, "to": "WASP/JANET VAN DYNE", "width": 1}, {"from": "SUB-MARINER/NAMOR MA", "n_collabs": 62, "to": "THOR/DR. DONALD BLAK", "width": 1}, {"from": "SUB-MARINER/NAMOR MA", "n_collabs": 49, "to": "HAWK", "width": 1}, {"from": "SUB-MARINER/NAMOR MA", "n_collabs": 57, "to": "VISION", "width": 1}, {"from": "SUB-MARINER/NAMOR MA", "n_collabs": 24, "to": "WOLVERINE/LOGAN", "width": 1}, {"from": "SUB-MARINER/NAMOR MA", "n_collabs": 14, "to": "FURY, COL. NICHOLAS", "width": 1}, {"from": "WATSON-PARKER, MARY", "n_collabs": 8, "to": "INVISIBLE WOMAN/SUE", "width": 1}, {"from": "WATSON-PARKER, MARY", "n_collabs": 3, "to": "ANT-MAN/DR. HENRY J.", "width": 1}, {"from": "WATSON-PARKER, MARY", "n_collabs": 9, "to": "IRON MAN/TONY STARK", "width": 1}, {"from": "WATSON-PARKER, MARY", "n_collabs": 17, "to": "MR. FANTASTIC/REED R", "width": 1}, {"from": "WATSON-PARKER, MARY", "n_collabs": 1, "to": "PROFESSOR X/CHARLES", "width": 1}, {"from": "WATSON-PARKER, MARY", "n_collabs": 235, "to": "JAMESON, J. JONAH", "width": 1}, {"from": "WATSON-PARKER, MARY", "n_collabs": 2, "to": "SCARLET WITCH/WANDA", "width": 1}, {"from": "WATSON-PARKER, MARY", "n_collabs": 19, "to": "DAREDEVIL/MATT MURDO", "width": 1}, {"from": "WATSON-PARKER, MARY", "n_collabs": 6, "to": "HULK/DR. ROBERT BRUC", "width": 1}, {"from": "WATSON-PARKER, MARY", "n_collabs": 2, "to": "STORM/ORORO MUNROE S", "width": 1}, {"from": "WATSON-PARKER, MARY", "n_collabs": 7, "to": "WOLVERINE/LOGAN", "width": 1}, {"from": "WATSON-PARKER, MARY", "n_collabs": 8, "to": "THOR/DR. DONALD BLAK", "width": 1}, {"from": "WATSON-PARKER, MARY", "n_collabs": 4, "to": "VISION", "width": 1}, {"from": "WATSON-PARKER, MARY", "n_collabs": 4, "to": "BEAST/HENRY \u0026HANK\u0026 P", "width": 1}, {"from": "WATSON-PARKER, MARY", "n_collabs": 3, "to": "HAWK", "width": 1}, {"from": "WATSON-PARKER, MARY", "n_collabs": 4, "to": "WASP/JANET VAN DYNE", "width": 1}, {"from": "WATSON-PARKER, MARY", "n_collabs": 1, "to": "FURY, COL. NICHOLAS", "width": 1}, {"from": "HULK/DR. ROBERT BRUC", "n_collabs": 77, "to": "INVISIBLE WOMAN/SUE", "width": 1}, {"from": "HULK/DR. ROBERT BRUC", "n_collabs": 49, "to": "ANT-MAN/DR. HENRY J.", "width": 1}, {"from": "HULK/DR. ROBERT BRUC", "n_collabs": 85, "to": "IRON MAN/TONY STARK", "width": 1}, {"from": "HULK/DR. ROBERT BRUC", "n_collabs": 89, "to": "MR. FANTASTIC/REED R", "width": 1}, {"from": "HULK/DR. ROBERT BRUC", "n_collabs": 44, "to": "PROFESSOR X/CHARLES", "width": 1}, {"from": "HULK/DR. ROBERT BRUC", "n_collabs": 20, "to": "JAMESON, J. JONAH", "width": 1}, {"from": "HULK/DR. ROBERT BRUC", "n_collabs": 65, "to": "SCARLET WITCH/WANDA", "width": 1}, {"from": "HULK/DR. ROBERT BRUC", "n_collabs": 38, "to": "DAREDEVIL/MATT MURDO", "width": 1}, {"from": "HULK/DR. ROBERT BRUC", "n_collabs": 43, "to": "BEAST/HENRY \u0026HANK\u0026 P", "width": 1}, {"from": "HULK/DR. ROBERT BRUC", "n_collabs": 71, "to": "WOLVERINE/LOGAN", "width": 1}, {"from": "HULK/DR. ROBERT BRUC", "n_collabs": 69, "to": "VISION", "width": 1}, {"from": "HULK/DR. ROBERT BRUC", "n_collabs": 45, "to": "STORM/ORORO MUNROE S", "width": 1}, {"from": "HULK/DR. ROBERT BRUC", "n_collabs": 72, "to": "THOR/DR. DONALD BLAK", "width": 1}, {"from": "HULK/DR. ROBERT BRUC", "n_collabs": 70, "to": "WASP/JANET VAN DYNE", "width": 1}, {"from": "HULK/DR. ROBERT BRUC", "n_collabs": 33, "to": "FURY, COL. NICHOLAS", "width": 1}, {"from": "HULK/DR. ROBERT BRUC", "n_collabs": 63, "to": "HAWK", "width": 1}, {"from": "JAMESON, J. JONAH", "n_collabs": 25, "to": "INVISIBLE WOMAN/SUE", "width": 1}, {"from": "JAMESON, J. JONAH", "n_collabs": 14, "to": "ANT-MAN/DR. HENRY J.", "width": 1}, {"from": "JAMESON, J. JONAH", "n_collabs": 27, "to": "IRON MAN/TONY STARK", "width": 1}, {"from": "JAMESON, J. JONAH", "n_collabs": 29, "to": "MR. FANTASTIC/REED R", "width": 1}, {"from": "JAMESON, J. JONAH", "n_collabs": 7, "to": "PROFESSOR X/CHARLES", "width": 1}, {"from": "JAMESON, J. JONAH", "n_collabs": 23, "to": "THOR/DR. DONALD BLAK", "width": 1}, {"from": "JAMESON, J. JONAH", "n_collabs": 15, "to": "BEAST/HENRY \u0026HANK\u0026 P", "width": 1}, {"from": "JAMESON, J. JONAH", "n_collabs": 17, "to": "WASP/JANET VAN DYNE", "width": 1}, {"from": "JAMESON, J. JONAH", "n_collabs": 50, "to": "DAREDEVIL/MATT MURDO", "width": 1}, {"from": "JAMESON, J. JONAH", "n_collabs": 13, "to": "SCARLET WITCH/WANDA", "width": 1}, {"from": "JAMESON, J. JONAH", "n_collabs": 14, "to": "WOLVERINE/LOGAN", "width": 1}, {"from": "JAMESON, J. JONAH", "n_collabs": 8, "to": "STORM/ORORO MUNROE S", "width": 1}, {"from": "JAMESON, J. JONAH", "n_collabs": 13, "to": "FURY, COL. NICHOLAS", "width": 1}, {"from": "JAMESON, J. JONAH", "n_collabs": 12, "to": "VISION", "width": 1}, {"from": "JAMESON, J. JONAH", "n_collabs": 8, "to": "HAWK", "width": 1}, {"from": "MR. FANTASTIC/REED R", "n_collabs": 701, "to": "INVISIBLE WOMAN/SUE", "width": 1}, {"from": "MR. FANTASTIC/REED R", "n_collabs": 72, "to": "ANT-MAN/DR. HENRY J.", "width": 1}, {"from": "MR. FANTASTIC/REED R", "n_collabs": 128, "to": "IRON MAN/TONY STARK", "width": 1}, {"from": "MR. FANTASTIC/REED R", "n_collabs": 60, "to": "BEAST/HENRY \u0026HANK\u0026 P", "width": 1}, {"from": "MR. FANTASTIC/REED R", "n_collabs": 89, "to": "SCARLET WITCH/WANDA", "width": 1}, {"from": "MR. FANTASTIC/REED R", "n_collabs": 53, "to": "WOLVERINE/LOGAN", "width": 1}, {"from": "MR. FANTASTIC/REED R", "n_collabs": 90, "to": "VISION", "width": 1}, {"from": "MR. FANTASTIC/REED R", "n_collabs": 51, "to": "STORM/ORORO MUNROE S", "width": 1}, {"from": "MR. FANTASTIC/REED R", "n_collabs": 129, "to": "THOR/DR. DONALD BLAK", "width": 1}, {"from": "MR. FANTASTIC/REED R", "n_collabs": 52, "to": "DAREDEVIL/MATT MURDO", "width": 1}, {"from": "MR. FANTASTIC/REED R", "n_collabs": 95, "to": "WASP/JANET VAN DYNE", "width": 1}, {"from": "MR. FANTASTIC/REED R", "n_collabs": 80, "to": "HAWK", "width": 1}, {"from": "MR. FANTASTIC/REED R", "n_collabs": 52, "to": "PROFESSOR X/CHARLES", "width": 1}, {"from": "MR. FANTASTIC/REED R", "n_collabs": 40, "to": "FURY, COL. NICHOLAS", "width": 1}, {"from": "HAWK", "n_collabs": 62, "to": "INVISIBLE WOMAN/SUE", "width": 1}, {"from": "HAWK", "n_collabs": 263, "to": "ANT-MAN/DR. HENRY J.", "width": 1}, {"from": "HAWK", "n_collabs": 294, "to": "IRON MAN/TONY STARK", "width": 1}, {"from": "HAWK", "n_collabs": 31, "to": "PROFESSOR X/CHARLES", "width": 1}, {"from": "HAWK", "n_collabs": 301, "to": "SCARLET WITCH/WANDA", "width": 1}, {"from": "HAWK", "n_collabs": 25, "to": "DAREDEVIL/MATT MURDO", "width": 1}, {"from": "HAWK", "n_collabs": 29, "to": "STORM/ORORO MUNROE S", "width": 1}, {"from": "HAWK", "n_collabs": 65, "to": "BEAST/HENRY \u0026HANK\u0026 P", "width": 1}, {"from": "HAWK", "n_collabs": 36, "to": "FURY, COL. NICHOLAS", "width": 1}, {"from": "HAWK", "n_collabs": 253, "to": "VISION", "width": 1}, {"from": "HAWK", "n_collabs": 269, "to": "WASP/JANET VAN DYNE", "width": 1}, {"from": "HAWK", "n_collabs": 210, "to": "THOR/DR. DONALD BLAK", "width": 1}, {"from": "HAWK", "n_collabs": 33, "to": "WOLVERINE/LOGAN", "width": 1}, {"from": "WOLVERINE/LOGAN", "n_collabs": 51, "to": "INVISIBLE WOMAN/SUE", "width": 1}, {"from": "WOLVERINE/LOGAN", "n_collabs": 18, "to": "ANT-MAN/DR. HENRY J.", "width": 1}, {"from": "WOLVERINE/LOGAN", "n_collabs": 33, "to": "IRON MAN/TONY STARK", "width": 1}, {"from": "WOLVERINE/LOGAN", "n_collabs": 248, "to": "PROFESSOR X/CHARLES", "width": 1}, {"from": "WOLVERINE/LOGAN", "n_collabs": 40, "to": "SCARLET WITCH/WANDA", "width": 1}, {"from": "WOLVERINE/LOGAN", "n_collabs": 25, "to": "DAREDEVIL/MATT MURDO", "width": 1}, {"from": "WOLVERINE/LOGAN", "n_collabs": 389, "to": "STORM/ORORO MUNROE S", "width": 1}, {"from": "WOLVERINE/LOGAN", "n_collabs": 146, "to": "BEAST/HENRY \u0026HANK\u0026 P", "width": 1}, {"from": "WOLVERINE/LOGAN", "n_collabs": 35, "to": "FURY, COL. NICHOLAS", "width": 1}, {"from": "WOLVERINE/LOGAN", "n_collabs": 46, "to": "VISION", "width": 1}, {"from": "WOLVERINE/LOGAN", "n_collabs": 28, "to": "THOR/DR. DONALD BLAK", "width": 1}, {"from": "WOLVERINE/LOGAN", "n_collabs": 34, "to": "WASP/JANET VAN DYNE", "width": 1}, {"from": "ANT-MAN/DR. HENRY J.", "n_collabs": 67, "to": "INVISIBLE WOMAN/SUE", "width": 1}, {"from": "ANT-MAN/DR. HENRY J.", "n_collabs": 406, "to": "WASP/JANET VAN DYNE", "width": 1}, {"from": "ANT-MAN/DR. HENRY J.", "n_collabs": 291, "to": "IRON MAN/TONY STARK", "width": 1}, {"from": "ANT-MAN/DR. HENRY J.", "n_collabs": 189, "to": "THOR/DR. DONALD BLAK", "width": 1}, {"from": "ANT-MAN/DR. HENRY J.", "n_collabs": 95, "to": "BEAST/HENRY \u0026HANK\u0026 P", "width": 1}, {"from": "ANT-MAN/DR. HENRY J.", "n_collabs": 244, "to": "SCARLET WITCH/WANDA", "width": 1}, {"from": "ANT-MAN/DR. HENRY J.", "n_collabs": 239, "to": "VISION", "width": 1}, {"from": "ANT-MAN/DR. HENRY J.", "n_collabs": 29, "to": "DAREDEVIL/MATT MURDO", "width": 1}, {"from": "ANT-MAN/DR. HENRY J.", "n_collabs": 25, "to": "FURY, COL. NICHOLAS", "width": 1}, {"from": "ANT-MAN/DR. HENRY J.", "n_collabs": 24, "to": "PROFESSOR X/CHARLES", "width": 1}, {"from": "ANT-MAN/DR. HENRY J.", "n_collabs": 15, "to": "STORM/ORORO MUNROE S", "width": 1}, {"from": "VISION", "n_collabs": 92, "to": "INVISIBLE WOMAN/SUE", "width": 1}, {"from": "VISION", "n_collabs": 333, "to": "IRON MAN/TONY STARK", "width": 1}, {"from": "VISION", "n_collabs": 34, "to": "PROFESSOR X/CHARLES", "width": 1}, {"from": "VISION", "n_collabs": 422, "to": "SCARLET WITCH/WANDA", "width": 1}, {"from": "VISION", "n_collabs": 44, "to": "DAREDEVIL/MATT MURDO", "width": 1}, {"from": "VISION", "n_collabs": 41, "to": "STORM/ORORO MUNROE S", "width": 1}, {"from": "VISION", "n_collabs": 144, "to": "BEAST/HENRY \u0026HANK\u0026 P", "width": 1}, {"from": "VISION", "n_collabs": 33, "to": "FURY, COL. NICHOLAS", "width": 1}, {"from": "VISION", "n_collabs": 254, "to": "WASP/JANET VAN DYNE", "width": 1}, {"from": "VISION", "n_collabs": 255, "to": "THOR/DR. DONALD BLAK", "width": 1}, {"from": "PROFESSOR X/CHARLES", "n_collabs": 43, "to": "INVISIBLE WOMAN/SUE", "width": 1}, {"from": "PROFESSOR X/CHARLES", "n_collabs": 29, "to": "IRON MAN/TONY STARK", "width": 1}, {"from": "PROFESSOR X/CHARLES", "n_collabs": 188, "to": "BEAST/HENRY \u0026HANK\u0026 P", "width": 1}, {"from": "PROFESSOR X/CHARLES", "n_collabs": 41, "to": "SCARLET WITCH/WANDA", "width": 1}, {"from": "PROFESSOR X/CHARLES", "n_collabs": 261, "to": "STORM/ORORO MUNROE S", "width": 1}, {"from": "PROFESSOR X/CHARLES", "n_collabs": 38, "to": "WASP/JANET VAN DYNE", "width": 1}, {"from": "PROFESSOR X/CHARLES", "n_collabs": 39, "to": "THOR/DR. DONALD BLAK", "width": 1}, {"from": "PROFESSOR X/CHARLES", "n_collabs": 17, "to": "FURY, COL. NICHOLAS", "width": 1}, {"from": "PROFESSOR X/CHARLES", "n_collabs": 17, "to": "DAREDEVIL/MATT MURDO", "width": 1}, {"from": "WASP/JANET VAN DYNE", "n_collabs": 87, "to": "INVISIBLE WOMAN/SUE", "width": 1}, {"from": "WASP/JANET VAN DYNE", "n_collabs": 301, "to": "IRON MAN/TONY STARK", "width": 1}, {"from": "WASP/JANET VAN DYNE", "n_collabs": 273, "to": "SCARLET WITCH/WANDA", "width": 1}, {"from": "WASP/JANET VAN DYNE", "n_collabs": 36, "to": "DAREDEVIL/MATT MURDO", "width": 1}, {"from": "WASP/JANET VAN DYNE", "n_collabs": 37, "to": "STORM/ORORO MUNROE S", "width": 1}, {"from": "WASP/JANET VAN DYNE", "n_collabs": 119, "to": "BEAST/HENRY \u0026HANK\u0026 P", "width": 1}, {"from": "WASP/JANET VAN DYNE", "n_collabs": 27, "to": "FURY, COL. NICHOLAS", "width": 1}, {"from": "WASP/JANET VAN DYNE", "n_collabs": 238, "to": "THOR/DR. DONALD BLAK", "width": 1}, {"from": "STORM/ORORO MUNROE S", "n_collabs": 47, "to": "INVISIBLE WOMAN/SUE", "width": 1}, {"from": "STORM/ORORO MUNROE S", "n_collabs": 22, "to": "IRON MAN/TONY STARK", "width": 1}, {"from": "STORM/ORORO MUNROE S", "n_collabs": 36, "to": "SCARLET WITCH/WANDA", "width": 1}, {"from": "STORM/ORORO MUNROE S", "n_collabs": 19, "to": "DAREDEVIL/MATT MURDO", "width": 1}, {"from": "STORM/ORORO MUNROE S", "n_collabs": 139, "to": "BEAST/HENRY \u0026HANK\u0026 P", "width": 1}, {"from": "STORM/ORORO MUNROE S", "n_collabs": 31, "to": "THOR/DR. DONALD BLAK", "width": 1}, {"from": "STORM/ORORO MUNROE S", "n_collabs": 15, "to": "FURY, COL. NICHOLAS", "width": 1}, {"from": "BEAST/HENRY \u0026HANK\u0026 P", "n_collabs": 54, "to": "INVISIBLE WOMAN/SUE", "width": 1}, {"from": "BEAST/HENRY \u0026HANK\u0026 P", "n_collabs": 142, "to": "IRON MAN/TONY STARK", "width": 1}, {"from": "BEAST/HENRY \u0026HANK\u0026 P", "n_collabs": 145, "to": "SCARLET WITCH/WANDA", "width": 1}, {"from": "BEAST/HENRY \u0026HANK\u0026 P", "n_collabs": 38, "to": "DAREDEVIL/MATT MURDO", "width": 1}, {"from": "BEAST/HENRY \u0026HANK\u0026 P", "n_collabs": 90, "to": "THOR/DR. DONALD BLAK", "width": 1}, {"from": "BEAST/HENRY \u0026HANK\u0026 P", "n_collabs": 29, "to": "FURY, COL. NICHOLAS", "width": 1}, {"from": "THOR/DR. DONALD BLAK", "n_collabs": 111, "to": "INVISIBLE WOMAN/SUE", "width": 1}, {"from": "THOR/DR. DONALD BLAK", "n_collabs": 344, "to": "IRON MAN/TONY STARK", "width": 1}, {"from": "THOR/DR. DONALD BLAK", "n_collabs": 254, "to": "SCARLET WITCH/WANDA", "width": 1}, {"from": "THOR/DR. DONALD BLAK", "n_collabs": 41, "to": "DAREDEVIL/MATT MURDO", "width": 1}, {"from": "THOR/DR. DONALD BLAK", "n_collabs": 33, "to": "FURY, COL. NICHOLAS", "width": 1}, {"from": "INVISIBLE WOMAN/SUE", "n_collabs": 114, "to": "IRON MAN/TONY STARK", "width": 1}, {"from": "INVISIBLE WOMAN/SUE", "n_collabs": 87, "to": "SCARLET WITCH/WANDA", "width": 1}, {"from": "INVISIBLE WOMAN/SUE", "n_collabs": 58, "to": "DAREDEVIL/MATT MURDO", "width": 1}, {"from": "INVISIBLE WOMAN/SUE", "n_collabs": 25, "to": "FURY, COL. NICHOLAS", "width": 1}, {"from": "SCARLET WITCH/WANDA", "n_collabs": 372, "to": "IRON MAN/TONY STARK", "width": 1}, {"from": "SCARLET WITCH/WANDA", "n_collabs": 35, "to": "FURY, COL. NICHOLAS", "width": 1}, {"from": "SCARLET WITCH/WANDA", "n_collabs": 37, "to": "DAREDEVIL/MATT MURDO", "width": 1}, {"from": "DAREDEVIL/MATT MURDO", "n_collabs": 53, "to": "IRON MAN/TONY STARK", "width": 1}, {"from": "DAREDEVIL/MATT MURDO", "n_collabs": 29, "to": "FURY, COL. NICHOLAS", "width": 1}, {"from": "FURY, COL. NICHOLAS", "n_collabs": 90, "to": "IRON MAN/TONY STARK", "width": 1}]);
+
+                  nodeColors = {};
+                  allNodes = nodes.get({ returnType: "Object" });
+                  for (nodeId in allNodes) {
+                    nodeColors[nodeId] = allNodes[nodeId].color;
+                  }
+                  allEdges = edges.get({ returnType: "Object" });
+                  // adding nodes and edges to the graph
+                  data = {nodes: nodes, edges: edges};
+
+                  var options = {
+    "configure": {
+        "enabled": true,
+        "filter": [
+            "nodes"
+        ]
+    },
+    "edges": {
+        "color": {
+            "inherit": true
+        },
+        "smooth": {
+            "enabled": true,
+            "type": "dynamic"
+        }
+    },
+    "interaction": {
+        "dragNodes": true,
+        "hideEdgesOnDrag": false,
+        "hideNodesOnDrag": false
+    },
+    "physics": {
+        "enabled": false,
+        "stabilization": {
+            "enabled": true,
+            "fit": true,
+            "iterations": 1000,
+            "onlyDynamicEdges": false,
+            "updateInterval": 50
+        }
+    }
+};
+
+                  
+
+
+                  
+                  // if this network requires displaying the configure window,
+                  // put it in its div
+                  options.configure["container"] = document.getElementById("config");
+                  
+
+                  network = new vis.Network(container, data, options);
+
+                  
+
+                  
+
+                  
+
+
+                  
+
+                  return network;
+
+              }
+              drawGraph();
+        </script>
+    </body>
+</html>
