@@ -121,3 +121,43 @@ def disconnecting_graphs(graph: nx.Graph, top_n: int, **kwargs):
     bridges = list(filter(lambda edge: edge_is_bridge(edge, graph_a, graph_b), subgraph.edges))
 
     return Disconnection(bridges, weight, subgraph, hero_a, hero_b, graph_a, graph_b)
+
+
+def get_metric_values(graph: nx.Graph, top_n: int, **kwargs):
+    """Calculates the metric values for the entire graph and for a given node.
+
+    :arg
+    graph (nx.Graph) - a networkx graph.
+    top_n (int) - the top N heroes to consider.
+    **node (str) - the node to consider.
+    **metric (str) - the metric to be applied. Possible metrics are: betweenness_centrality, pagerank,
+    closeness_centrality, degree_centrality.
+
+    :return
+    (dict, float) - a dictionary with the metric values for the top n heroes, and the metric value for the specific node.
+    """
+    #
+    node, metric = kwargs.get('node'), kwargs.get('metric')
+
+    if metric == 'betweenness_centrality':
+        metric_values = nx.betweenness_centrality(graph)
+    elif metric == 'pagerank':
+        metric_values = nx.pagerank(graph)
+    elif metric == 'closeness_centrality':
+        metric_values = nx.closeness_centrality(graph)
+    elif metric == 'degree_centrality':
+        metric_values = nx.degree_centrality(graph)
+    else:
+        raise ValueError('Invalid metric')
+
+    # Get the metric value for the given node
+    node_metric_value = metric_values[node]
+
+    # Get the top N nodes with the most edges
+    top_n_edges = sorted(graph.degree, key=lambda x: x[1], reverse=True)[:top_n]
+    top_n_nodes = [t[0] for t in top_n_edges]
+
+    # Filter the metric values for the top N nodes
+    top_n_metric_values = {k: v for k, v in metric_values.items() if k in top_n_nodes}
+
+    return top_n_metric_values, node_metric_value
