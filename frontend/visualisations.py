@@ -36,7 +36,8 @@ def disconnected_graph(disc: Disconnection):
     disc (Disconnection) - the disconnection to be visualised.
 
     :return
-    (str, str) - the paths for the generated html for the original and disconnected graphs.
+    (str, str, str) - a message about the disconnected graphs and the two paths for the generated html for the
+    original and disconnected graphs.
     """
 
     target_directory = "doc/visualisations/disconnected"
@@ -45,12 +46,10 @@ def disconnected_graph(disc: Disconnection):
 
     os.makedirs(target_directory, exist_ok=True)
 
-    logger.info("Starting visualisation of disconnected graph.")
     message = f'The number of edges that were removed from the original graph is: {disc.num_links()}'
 
-    #colour_map = ['red' if node in {disc.hero_a, disc.hero_b} else 'blue' for node in disc.original_graph.nodes]
-    #nx.draw(disc.original_graph, node_color=colour_map, with_labels=True)
     attrs = {}
+    # use different colours for the two main heroes to distinguish them from the rest.
     for node in disc.original_graph.nodes():
         if node in {disc.hero_a, disc.hero_b}:
             attrs[node] = {'color': 'red'}
@@ -61,10 +60,8 @@ def disconnected_graph(disc: Disconnection):
     # Get the current screen width and height
     screen_width, screen_height = get_screen_size()
 
-
     def node_size(x): return 50
-    # populates the nodes and edges data structures
-    # Network.set_options()
+
     nt = Network(height=f'{screen_height}px', width='100%')
 
     nt.barnes_hut()
@@ -75,11 +72,8 @@ def disconnected_graph(disc: Disconnection):
     nt.write_html(original_graph_file)
     logger.info(f"Successfully wrote original graph to: {original_graph_file}.")
 
-
     nt = Network(height=f'{screen_height}px', width='100%')
 
-    #nt.barnes_hut()
-    #nt.toggle_physics(False)
     removed_graphs = nx.Graph()
     removed_graphs.add_nodes_from(list(disc.graph_a.nodes(data=True)) + list(disc.graph_b.nodes(data=True)))
     removed_graphs.add_edges_from(list(disc.graph_a.edges(data=True)) + list(disc.graph_b.edges(data=True)))
@@ -102,4 +96,4 @@ def disconnected_graph(disc: Disconnection):
 
     logger.info(f"Successfully wrote disconnected graphs to: {disconnected_graphs_file}.")
 
-    return original_graph_file, disconnected_graphs_file
+    return message, original_graph_file, disconnected_graphs_file
