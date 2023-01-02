@@ -19,7 +19,7 @@ class Controller:
         :arg
         graph (nx.Graph) - the graph that this controller will operate on.
         """
-        self.graph = graph
+        self.graph = nx.Graph(graph)
         self.funcs = {features.__name__: features,
                       shortest_ordered_route.__name__: shortest_ordered_route,
                       disconnecting_graphs.__name__: disconnecting_graphs,
