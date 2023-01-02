@@ -4,7 +4,7 @@ import networkx as nx
 
 from backend.graph import get_n_heroes_per_comic, get_subgraph_with, get_hero_collabs
 from backend.service import TopHeroService
-from .describe import GraphMode, GraphType, GraphFeatures, get_degree_dist, get_hubs
+from .describe import GraphType, GraphFeatures, get_degree_dist, get_hubs, get_graph_mode
 from .domain import Disconnection
 
 
@@ -20,6 +20,12 @@ def features(graph: nx.Graph, top_n: int, **kwargs):
     a GraphFeatures object.
     """
     graph_type = kwargs.get('graph_type')
+
+    if not graph_type:
+        raise ValueError(f'You must specify the graph_type kwargs parameter. It is: {graph_type}.')
+    if not isinstance(graph_type, GraphType):
+        raise ValueError(f'The provided graph_type kwargs parameter must be of type GraphType. type(graph_type): {type(graph_type)}.')
+
     hero_collabs = {}
     n_heroes_per_comic = []
     n_nodes = len(graph.nodes())
@@ -42,7 +48,9 @@ def features(graph: nx.Graph, top_n: int, **kwargs):
 
     hubs = get_hubs(graph, 95)
 
-    return GraphFeatures(graph_type, n_nodes, hero_collabs, n_heroes_per_comic, density, degree_dist, avg_degree, hubs, GraphMode.DENSE)
+    graph_mode = get_graph_mode(subgraph)
+
+    return GraphFeatures(graph_type, n_nodes, hero_collabs, n_heroes_per_comic, density, degree_dist, avg_degree, hubs, graph_mode)
 
 
 def shortest_ordered_route(graph: nx.Graph, top_n: int, **kwargs):
