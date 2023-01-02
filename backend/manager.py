@@ -188,7 +188,7 @@ def _girvan_newman(graph):
     return sg
 
 
-def cut_communities(graph: nx.Graph, top_n: int, **kwargs):
+def extract_communities(graph: nx.Graph, top_n: int, **kwargs):
     """Cuts the given graph into separate communities.
 
     :arg
