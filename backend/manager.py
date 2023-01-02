@@ -161,3 +161,70 @@ def get_metric_values(graph: nx.Graph, top_n: int, **kwargs):
     top_n_metric_values = {k: v for k, v in metric_values.items() if k in top_n_nodes}
 
     return top_n_metric_values, node_metric_value
+
+
+def _edge_to_remove(graph):
+    G_dict = nx.edge_betweenness_centrality(graph)
+    edge = ()
+
+    # extract the edge with highest edge betweenness centrality score
+    for key, value in sorted(G_dict.items(), key=lambda item: item[1], reverse=True):
+        edge = key
+        break
+
+    return edge
+
+
+def _girvan_newman(graph):
+    # find number of connected components
+    sg = nx.connected_components(graph)
+    sg_count = nx.number_connected_components(graph)
+
+    while (sg_count == 1):
+        graph.remove_edge(_edge_to_remove(graph)[0], _edge_to_remove(graph)[1])
+        sg = nx.connected_components(graph)
+        sg_count = nx.number_connected_components(graph)
+
+    return sg
+
+
+def cut_communities(graph: nx.Graph, top_n: int, **kwargs):
+    """Cuts the given graph into separate communities.
+
+    :arg
+    graph (nx.Graph) - a networkx graph where heroes are connected to heroes.
+    top_n (int) - the top n heroes to consider.
+    **hero_1 (str) - the hero to be checked if it is in the same community as hero_2.
+    **hero_2 (str) - the hero to be checked if it is in the same community as hero_1.
+
+    :return
+    (int, list, bool) - the lenght of the minimum cut that separates communities, the found communities, whether the
+    two heroes are in the same community.
+    """
+
+    hero_1, hero_2 = kwargs.get('hero_1'), kwargs.get('hero_2')
+
+    if not hero_1:
+        raise ValueError(f'The hero_1 kwargs needs to be set.')
+    if not hero_2:
+        raise ValueError(f'The hero_2 kwargs needs to be set.')
+
+    hs = TopHeroService.create_from('data/edges.csv')
+    top_heroes = hs.top_n(top_n)
+
+    get_subgraph_with(top_heroes, neighbours=False)
+
+    min_cut = nx.minimum_edge_cut(graph)
+
+    # Find the communities using girvan_newman function
+    unf = nx.Graph(graph)
+    communities = list(_girvan_newman(unf))
+
+    # Check if the hero_1 and hero_2 belong to the same community
+    same_community = False
+    for community in communities:
+        if hero_1 in community and hero_2 in community:
+            same_community = True
+            break
+
+    return len(min_cut), communities, same_community

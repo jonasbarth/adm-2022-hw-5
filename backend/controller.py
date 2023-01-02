@@ -3,7 +3,7 @@ import logging
 
 import networkx as nx
 
-from .manager import features, shortest_ordered_route, disconnecting_graphs, get_metric_values
+from .manager import features, shortest_ordered_route, disconnecting_graphs, get_metric_values, cut_communities
 
 logging.basicConfig(format='%(asctime)s - %(message)s', datefmt='%d-%b-%y %H:%M:%S')
 logger = logging.getLogger(__name__)
@@ -23,7 +23,8 @@ class Controller:
         self.funcs = {features.__name__: features,
                       shortest_ordered_route.__name__: shortest_ordered_route,
                       disconnecting_graphs.__name__: disconnecting_graphs,
-                      get_metric_values.__name__: get_metric_values}
+                      get_metric_values.__name__: get_metric_values,
+                      cut_communities.__name__: cut_communities}
 
     def run(self, identifier: str, top_n: int, **kwargs):
         """Runs the function that maps to the specific identifier on the graph of this controller.

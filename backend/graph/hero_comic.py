@@ -65,7 +65,7 @@ def create_from(nodes=None, edges=None):
         return graph, GraphType.HERO_COMIC
 
 
-def get_subgraph_with(graph: nx.Graph, heroes: iter):
+def get_subgraph_with(graph: nx.Graph, heroes: iter, neighbours=True):
     """Gets a subgraph of the given graph with the heroes and their neighbours.
 
     :arg
@@ -75,9 +75,11 @@ def get_subgraph_with(graph: nx.Graph, heroes: iter):
     :return
     a networkx graph that is a subgraph of the given graph with all the provided heroes and the comics they appear in.
     """
-    comics = list(itertools.chain(*set(graph.neighbors(hero) for hero in heroes)))
-    subgraph = graph.subgraph(heroes + comics)
-    return subgraph
+    if neighbours:
+        comics = list(itertools.chain(*set(graph.neighbors(hero) for hero in heroes)))
+        return graph.subgraph(heroes + comics)
+
+    return graph.subgraph(heroes)
 
 
 def get_comic_nodes(graph: nx.Graph):
@@ -89,13 +91,6 @@ def get_comic_nodes(graph: nx.Graph):
     :return
     a list of node names that are comics.
     """
-    for node, attributes in graph.nodes(data=True):
-        try:
-            if attributes['type'] == 'comic':
-                #print(attributes)
-                pass
-        except KeyError as e:
-            print(f'Node: {node}. Attributes: {attributes}. {e}')
     return [node for node, attributes in graph.nodes(data=True) if attributes['type'] == 'comic']
 
 
