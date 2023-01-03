@@ -171,12 +171,12 @@ def communities(comms: Communities):
     table.scale(2, 2)
     ax.axis("off")
 
-    # Plot the original graph
     screen_width, screen_height = get_screen_size()
 
     def node_size(x):
         return 50
 
+    # Create the original graph
     nt = Network(height=f'{screen_height}px', width='100%')
 
     nt.barnes_hut()
@@ -186,10 +186,11 @@ def communities(comms: Communities):
     nt.write_html(original_graph_file)
     logger.info(f"Successfully wrote original graph to: {original_graph_file}.")
 
-    # Plot the graph showing the communities in the network
+    # Create the graph showing the communities in the network
     communities_graph = nx.Graph(comms.original_graph)
     attrs = {}
-    # use different colours for the two main heroes to distinguish them from the rest.
+
+    # use different colours for the two heroes to distinguish them from the rest.
     for node in communities_graph.nodes():
         if node in comms.community_1:
             attrs[node] = {'color': 'red'}
@@ -207,13 +208,13 @@ def communities(comms: Communities):
     nt.write_html(communities_graphs_file)
     logger.info(f"Successfully wrote communities graph to: {original_graph_file}.")
 
-    # Plot the final graph and identify the community/communities of Hero_1 and Hero_2
+    # Create the final graph and identify the community/communities of Hero_1 and Hero_2
     hero_1_community = comms.community_1 if comms.hero_1 in comms.community_1 else comms.community_2
     hero_2_community = comms.community_1 if comms.hero_2 in comms.community_1 else comms.community_2
 
     final_graph = nx.Graph(comms.original_graph)
     attrs = {}
-    # use different colours for the two main heroes to distinguish them from the rest.
+
     for node in final_graph.nodes():
         # Green means that both heroes are in the same community
         if node in hero_1_community and node in hero_2_community:

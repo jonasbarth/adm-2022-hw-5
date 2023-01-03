@@ -249,4 +249,3 @@ def extract_communities(graph: nx.Graph, top_n: int, **kwargs):
 
     community_1, community_2 = communities
     return Communities(min_cut, subgraph, hero_1, hero_2, community_1, community_2, same_community)
-    #return len(min_cut), communities, same_community
