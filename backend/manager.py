@@ -5,7 +5,7 @@ import networkx as nx
 from backend.graph import get_n_heroes_per_comic, get_subgraph_with, get_hero_collabs
 from backend.service import TopHeroService
 from .describe import GraphType, GraphFeatures, get_degree_dist, get_hubs, get_graph_mode
-from .domain import Disconnection
+from .domain import Disconnection, Communities
 
 
 def features(graph: nx.Graph, top_n: int, **kwargs):
@@ -226,12 +226,12 @@ def extract_communities(graph: nx.Graph, top_n: int, **kwargs):
     hs = TopHeroService.create_from('data/edges.csv')
     top_heroes = hs.top_n(top_n)
 
-    get_subgraph_with(top_heroes, neighbours=False)
+    subgraph = get_subgraph_with(graph, top_heroes, neighbours=False)
 
-    min_cut = nx.minimum_edge_cut(graph)
+    min_cut = nx.minimum_edge_cut(subgraph)
 
     # Find the communities using girvan_newman function
-    unf = nx.Graph(graph)
+    unf = nx.Graph(subgraph)
     communities = list(_girvan_newman(unf))
 
     # Check if the hero_1 and hero_2 belong to the same community
@@ -241,4 +241,6 @@ def extract_communities(graph: nx.Graph, top_n: int, **kwargs):
             same_community = True
             break
 
-    return len(min_cut), communities, same_community
+    community_1, community_2 = communities
+    return Communities(min_cut, subgraph, hero_1, hero_2, community_1, community_2, same_community)
+    #return len(min_cut), communities, same_community
