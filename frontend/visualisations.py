@@ -8,7 +8,7 @@ import pandas as pd
 import networkx as nx
 from pyvis.network import Network
 import matplotlib.pyplot as plt
-from backend.domain import Disconnection
+from backend.domain import Disconnection, Communities
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -129,3 +129,88 @@ def metrics(graph_metrics: dict, node_metrics: dict, metric: str):
     table.set_fontsize(12)
     table.scale(2, 2)
     ax.axis("off");
+
+
+def communities(comms: Communities):
+    """Visualises the communities."""
+    target_directory = "doc/visualisations/communities"
+    original_graph_file = f'{target_directory}/original_graph.html'
+    communities_graphs_file = f'{target_directory}/communities_graph.html'
+    final_graphs_file = f'{target_directory}/final_graph.html'
+
+    os.makedirs(target_directory, exist_ok=True)
+
+    # Print the number of links that should be removed to have the communities
+    message = f'The number of links that should be removed to have two communities is: {comms.num_links()}.'
+
+    # A table depicting the communities and the heroes that belong to each community
+    
+
+    # Plot the original graph
+    screen_width, screen_height = get_screen_size()
+
+    def node_size(x): return 50
+
+    nt = Network(height=f'{screen_height}px', width='100%')
+
+    nt.barnes_hut()
+    nt.from_nx(comms.original_graph, node_size_transf=node_size)
+    nt.show_buttons(filter_=['nodes'])
+
+    nt.write_html(original_graph_file)
+    logger.info(f"Successfully wrote original graph to: {original_graph_file}.")
+
+    # Plot the graph showing the communities in the network
+    communities_graph = nx.Graph(comms.original_graph)
+    attrs = {}
+    # use different colours for the two main heroes to distinguish them from the rest.
+    for node in communities_graph.nodes():
+        if node in comms.community_1:
+            attrs[node] = {'color': 'red'}
+        elif node in comms.community_2:
+            attrs[node] = {'color': 'blue'}
+
+    nx.set_node_attributes(communities_graph, attrs)
+
+    nt = Network(height=f'{screen_height}px', width='100%')
+
+    nt.barnes_hut()
+    nt.from_nx(communities_graph, node_size_transf=node_size)
+    nt.show_buttons(filter_=['nodes'])
+
+    nt.write_html(communities_graphs_file)
+    logger.info(f"Successfully wrote communities graph to: {original_graph_file}.")
+
+
+    # Plot the final graph and identify the community/communities of Hero_1 and Hero_2
+    hero_1_community = comms.community_1 if comms.hero_1 in comms.community_1 else comms.community_2
+    hero_2_community = comms.community_1 if comms.hero_2 in comms.community_1 else comms.community_2
+
+    final_graph = nx.Graph(comms.original_graph)
+    attrs = {}
+    # use different colours for the two main heroes to distinguish them from the rest.
+    for node in final_graph.nodes():
+        # Green means that both heroes are in the same community
+        if node in hero_1_community and node in hero_2_community:
+            attrs[node] = {'color': 'green'}
+        # Blue means that a node is in hero 1 community
+        elif node in hero_1_community:
+            attrs[node] = {'color': 'blue'}
+        # Red means that a node is in hero 2 community
+        elif node in hero_2_community:
+            attrs[node] = {'color': 'red'}
+        # Yellow means that the node is in neither community
+        else:
+            attrs[node] = {'color': 'yellow'}
+
+    nx.set_node_attributes(final_graph, attrs)
+
+    nt = Network(height=f'{screen_height}px', width='100%')
+
+    nt.barnes_hut()
+    nt.from_nx(final_graph, node_size_transf=node_size)
+    nt.show_buttons(filter_=['nodes'])
+
+    nt.write_html(final_graphs_file)
+    logger.info(f"Successfully wrote final graph to: {final_graphs_file}.")
+
