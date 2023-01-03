@@ -225,6 +225,12 @@ def extract_communities(graph: nx.Graph, top_n: int, **kwargs):
 
     hs = TopHeroService.create_from('data/edges.csv')
     top_heroes = hs.top_n(top_n)
+    
+    if hero_1 not in top_heroes:
+        raise ValueError(f'The provided hero_1: {hero_1} is not part of the top_n: {top_n} heroes.')
+
+    if hero_2 not in top_heroes:
+        raise ValueError(f'The provided hero_2: {hero_2} is not part of the top_n: {top_n} heroes.')
 
     subgraph = get_subgraph_with(graph, top_heroes, neighbours=False)
 

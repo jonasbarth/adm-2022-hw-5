@@ -61,7 +61,8 @@ def disconnected_graph(disc: Disconnection):
     # Get the current screen width and height
     screen_width, screen_height = get_screen_size()
 
-    def node_size(x): return 50
+    def node_size(x):
+        return 50
 
     nt = Network(height=f'{screen_height}px', width='100%')
 
@@ -80,7 +81,7 @@ def disconnected_graph(disc: Disconnection):
     removed_graphs.add_edges_from(list(disc.graph_a.edges(data=True)) + list(disc.graph_b.edges(data=True)))
 
     nt.from_nx(removed_graphs)
-   
+
     pos = nx.spring_layout(removed_graphs, k=2, scale=1000)
 
     for node in nt.get_nodes():
@@ -120,10 +121,10 @@ def metrics(graph_metrics: dict, node_metrics: dict, metric: str):
     ax = fig.add_subplot(211)
 
     table = ax.table(cellText=df_metrics.values,
-             colLabels=df_metrics.columns,
-             loc="center",
-             cellLoc='center',
-             colLoc='center')
+                     colLabels=df_metrics.columns,
+                     loc="center",
+                     cellLoc='center',
+                     colLoc='center')
 
     ax.set_title(metric)
     table.set_fontsize(12)
@@ -144,12 +145,37 @@ def communities(comms: Communities):
     message = f'The number of links that should be removed to have two communities is: {comms.num_links()}.'
 
     # A table depicting the communities and the heroes that belong to each community
-    
+
+    community_1, community_2 = pd.Series(list(comms.community_1)), pd.Series(list(comms.community_2))
+    df_communities = pd.DataFrame({'Community 1': community_1, 'Community2': community_2})
+    for col in df_communities.columns:
+        df_communities[col].fillna('-', inplace=True)
+    fig = plt.figure(figsize=(8, df_communities.shape[0]))
+    ax = fig.add_subplot(211)
+
+    colors = np.array(list(zip(["w"] * df_communities.shape[0], ["w"] * df_communities.shape[0])))
+
+    hero_1_index, hero_2_index = np.where(df_communities.values == comms.hero_1), np.where(df_communities.values == comms.hero_2)
+    colors[hero_1_index] = 'blue'
+    colors[hero_2_index] = 'red'
+
+    table = ax.table(cellText=df_communities.values,
+                     colLabels=df_communities.columns,
+                     loc="center",
+                     cellLoc='center',
+                     colLoc='center',
+                     cellColours=colors)
+
+    ax.set_title("Two communities and their heroes.")
+    table.set_fontsize(12)
+    table.scale(2, 2)
+    ax.axis("off")
 
     # Plot the original graph
     screen_width, screen_height = get_screen_size()
 
-    def node_size(x): return 50
+    def node_size(x):
+        return 50
 
     nt = Network(height=f'{screen_height}px', width='100%')
 
@@ -180,7 +206,6 @@ def communities(comms: Communities):
 
     nt.write_html(communities_graphs_file)
     logger.info(f"Successfully wrote communities graph to: {original_graph_file}.")
-
 
     # Plot the final graph and identify the community/communities of Hero_1 and Hero_2
     hero_1_community = comms.community_1 if comms.hero_1 in comms.community_1 else comms.community_2
@@ -214,3 +239,4 @@ def communities(comms: Communities):
     nt.write_html(final_graphs_file)
     logger.info(f"Successfully wrote final graph to: {final_graphs_file}.")
 
+    return message, fig, original_graph_file, communities_graphs_file, final_graphs_file
