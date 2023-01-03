@@ -1,13 +1,14 @@
 """Module for visualising backend functionalities."""
+import numpy as np
 import logging
 import os
 from tkinter import *
 
+import pandas as pd
 import networkx as nx
 from pyvis.network import Network
-
+import matplotlib.pyplot as plt
 from backend.domain import Disconnection
-
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -97,3 +98,34 @@ def disconnected_graph(disc: Disconnection):
     logger.info(f"Successfully wrote disconnected graphs to: {disconnected_graphs_file}.")
 
     return message, original_graph_file, disconnected_graphs_file
+
+
+def metrics(graph_metrics: dict, node_metrics: dict, metric: str):
+    """Returns a table of the average metric values over the graph metrics and the single node metric.
+
+    :arg
+    graph_metrics (dict) - a dictionary with node names as keys and metric values as values.
+    node_metrics (dict) a dictionary with with a single node name as key and its metric as value.
+    metric (str) - the name of the metric that was used.
+    table_format (str) - the format of the table to be returned.
+    """
+    avg = np.average([*graph_metrics.values()])
+
+    data = [[avg, *node_metrics.values()]]
+    headers = [f'Top {len(graph_metrics)} Heroes Average', *node_metrics.keys()]
+
+    df_metrics = pd.DataFrame(data=data, columns=headers)
+
+    fig = plt.figure(figsize=(8, 2))
+    ax = fig.add_subplot(211)
+
+    table = ax.table(cellText=df_metrics.values,
+             colLabels=df_metrics.columns,
+             loc="center",
+             cellLoc='center',
+             colLoc='center')
+
+    ax.set_title(metric)
+    table.set_fontsize(12)
+    table.scale(2, 2)
+    ax.axis("off");

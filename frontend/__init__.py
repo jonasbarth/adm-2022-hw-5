@@ -1,1 +1,2 @@
-from .visualisations import disconnected_graph
+from .visualisations import disconnected_graph, metrics
+

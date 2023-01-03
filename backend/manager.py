@@ -24,7 +24,8 @@ def features(graph: nx.Graph, top_n: int, **kwargs):
     if not graph_type:
         raise ValueError(f'You must specify the graph_type kwargs parameter. It is: {graph_type}.')
     if not isinstance(graph_type, GraphType):
-        raise ValueError(f'The provided graph_type kwargs parameter must be of type GraphType. type(graph_type): {type(graph_type)}.')
+        raise ValueError(
+            f'The provided graph_type kwargs parameter must be of type GraphType. type(graph_type): {type(graph_type)}.')
 
     hero_collabs = {}
     n_heroes_per_comic = []
@@ -50,7 +51,8 @@ def features(graph: nx.Graph, top_n: int, **kwargs):
 
     graph_mode = get_graph_mode(subgraph)
 
-    return GraphFeatures(graph_type, n_nodes, hero_collabs, n_heroes_per_comic, density, degree_dist, avg_degree, hubs, graph_mode)
+    return GraphFeatures(graph_type, n_nodes, hero_collabs, n_heroes_per_comic, density, degree_dist, avg_degree, hubs,
+                         graph_mode)
 
 
 def shortest_ordered_route(graph: nx.Graph, top_n: int, **kwargs):
@@ -94,6 +96,7 @@ def disconnecting_graphs(graph: nx.Graph, top_n: int, **kwargs):
     (float, int, nx.Graph, nx.Graph) - The cumulative weight of the removed edges, the number of removed edges, the two
     disconnected subgraphs.
     """
+
     def edge_is_bridge(edge, graph_a, graph_b):
         start, end = edge
         return (start in graph_a and end in graph_b) or (start in graph_b and end in graph_a)
@@ -123,7 +126,7 @@ def disconnecting_graphs(graph: nx.Graph, top_n: int, **kwargs):
     return Disconnection(bridges, weight, subgraph, hero_a, hero_b, graph_a, graph_b)
 
 
-def get_metric_values(graph: nx.Graph, top_n: int, **kwargs):
+def metrics(graph: nx.Graph, top_n: int, **kwargs):
     """Calculates the metric values for the entire graph and for a given node.
 
     :arg
@@ -136,31 +139,42 @@ def get_metric_values(graph: nx.Graph, top_n: int, **kwargs):
     :return
     (dict, float) - a dictionary with the metric values for the top n heroes, and the metric value for the specific node.
     """
-    #
+
     node, metric = kwargs.get('node'), kwargs.get('metric')
 
+    hs = TopHeroService.create_from('data/edges.csv')
+    top_heroes = hs.top_n(top_n)
+
+    if not node:
+        raise ValueError(f'The node must not be None.')
+
+    if node not in top_heroes:
+        raise ValueError(f'The node: {node} is not part of the top {top_n} heroes.')
+
+    subgraph = nx.subgraph(graph, top_heroes)
+
     if metric == 'betweenness_centrality':
-        metric_values = nx.betweenness_centrality(graph)
+        metric_values = nx.betweenness_centrality(subgraph)
     elif metric == 'pagerank':
-        metric_values = nx.pagerank(graph)
+        metric_values = nx.pagerank(subgraph)
     elif metric == 'closeness_centrality':
-        metric_values = nx.closeness_centrality(graph)
+        metric_values = nx.closeness_centrality(subgraph)
     elif metric == 'degree_centrality':
-        metric_values = nx.degree_centrality(graph)
+        metric_values = nx.degree_centrality(subgraph)
     else:
-        raise ValueError('Invalid metric')
+        raise ValueError(f'Invalid metric: {metric}.')
 
     # Get the metric value for the given node
     node_metric_value = metric_values[node]
 
     # Get the top N nodes with the most edges
-    top_n_edges = sorted(graph.degree, key=lambda x: x[1], reverse=True)[:top_n]
+    top_n_edges = sorted(subgraph.degree, key=lambda x: x[1], reverse=True)[:top_n]
     top_n_nodes = [t[0] for t in top_n_edges]
 
     # Filter the metric values for the top N nodes
     top_n_metric_values = {k: v for k, v in metric_values.items() if k in top_n_nodes}
 
-    return top_n_metric_values, node_metric_value
+    return top_n_metric_values, {node: node_metric_value}
 
 
 def _edge_to_remove(graph):
