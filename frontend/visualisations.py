@@ -8,10 +8,76 @@ import pandas as pd
 import networkx as nx
 from pyvis.network import Network
 import matplotlib.pyplot as plt
+
+from backend.describe import GraphFeatures, GraphType
 from backend.domain import Disconnection, Communities
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
+
+
+def visualise_features(features: GraphFeatures):
+    """Visualises a features object.
+
+    :arg
+    features (GraphFeatures) - the GraphFeatures object.
+
+
+    """
+    # Basic features:
+    print('')
+    print('SOME BASIC FEATURE:')
+    print('')
+    print(f'-->  This network has {features.n_nodes} nodes.')
+    print(f'-->  The density of the network is {features.density}')
+    # Since the density varies between 0 and 1, we set 0.5 as a treshold to decide wheter the network is dense or sparse
+
+    print(f'-->  Since the density is {features.density}, we say that the network is {features.mode.name}.')
+
+    print(f'-->  The average degree in the network is {features.avg_degree} nodes.')
+    print('')
+    print('*' * 50)
+    print('')
+
+    print('SOME INFO ABOUT THE HUBS:')
+    print('')
+    print('-->  The Hubs of the network are the following:')
+    print(list(features.hubs))
+    print('')
+    print('*' * 70)
+    print('')
+
+    # Number of collabs for each hero:
+    if features.graph_type == GraphType.COLLABORATIVE:
+        print('SOME INFO ABOUT THE COLLABORATION OF EACH HERO:')
+        print('')
+        for collab in features.hero_collabs:
+            print(f'{collab.hero1} has {collab.n_collabs} collaborations with {collab.hero2}.')
+        print('')
+        print('*' * 70)
+
+        # Number of heroes for each comic:
+    if features.graph_type == GraphType.HERO_COMIC:
+        print('SOME INFO ABOUT THE COMICS:')
+        print('')
+
+        for comic in features.n_heroes_per_comic:
+            print(f'The comic {comic.name} has {comic.n_heroes} heroes')
+        print('')
+        print('*' * 70)
+
+        # Degree Distribution
+    print('')
+    print('THE DEGREE DISTRIBUTION:')
+
+    fig = plt.figure(figsize=(8, 8))
+    axgrid = fig.add_gridspec(5, 4)
+
+    ax1 = fig.add_subplot(axgrid[3:, :2])
+    ax1.plot(features.degree_dist.degree, marker=".", markersize=4, color='tomato')
+    ax1.set_title("Degree Distribution")
+    ax1.set_ylabel("Degree")
+    ax1.set_xlabel("Rank")
 
 
 def get_screen_size():

@@ -29,7 +29,6 @@ def features(graph: nx.Graph, top_n: int, **kwargs):
 
     hero_collabs = {}
     n_heroes_per_comic = []
-    n_nodes = len(graph.nodes())
     hs = TopHeroService.create_from('data/edges.csv')
 
     top_heroes = hs.top_n(top_n)
@@ -42,12 +41,13 @@ def features(graph: nx.Graph, top_n: int, **kwargs):
         subgraph = get_subgraph_with(graph, top_heroes)
         n_heroes_per_comic = get_n_heroes_per_comic(subgraph)
 
-    density = nx.density(graph)
-    degree_dist = get_degree_dist(graph)
+    n_nodes = len(subgraph.nodes())
+    density = nx.density(subgraph)
+    degree_dist = get_degree_dist(subgraph)
 
-    avg_degree = sum(map(lambda node: graph.degree(node), graph.nodes)) / n_nodes
+    avg_degree = sum(map(lambda node: subgraph.degree(node), subgraph.nodes)) / n_nodes
 
-    hubs = get_hubs(graph, 95)
+    hubs = get_hubs(subgraph, 95)
 
     graph_mode = get_graph_mode(subgraph)
 
