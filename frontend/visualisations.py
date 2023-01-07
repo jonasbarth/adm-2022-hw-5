@@ -94,7 +94,7 @@ def get_screen_size():
     return win.winfo_screenwidth(), win.winfo_screenheight()
 
 
-def disconnected_graph(disc: Disconnection):
+def visualise_disconnected_graph(disc: Disconnection):
     """Visualises disconnected graphs.
 
     :arg
@@ -165,7 +165,7 @@ def disconnected_graph(disc: Disconnection):
     return message, original_graph_file, disconnected_graphs_file
 
 
-def metrics(graph_metrics: dict, node_metrics: dict, metric: str):
+def visualise_metrics(graph_metrics: dict, node_metrics: dict, metric: str):
     """Returns a table of the average metric values over the graph metrics and the single node metric.
 
     :arg
@@ -196,7 +196,7 @@ def metrics(graph_metrics: dict, node_metrics: dict, metric: str):
     ax.axis("off");
 
 
-def communities(comms: Communities):
+def visualise_communities(comms: Communities):
     """Visualises the communities."""
     target_directory = "doc/visualisations/communities"
     original_graph_file = f'{target_directory}/original_graph.html'

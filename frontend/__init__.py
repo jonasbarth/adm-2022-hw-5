@@ -1,1 +1,1 @@
-from .visualisations import disconnected_graph, metrics, communities, visualise_features
+from .visualisations import visualise_disconnected_graph, visualise_metrics, visualise_communities, visualise_features
