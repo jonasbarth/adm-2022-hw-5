@@ -102,10 +102,10 @@ def get_n_heroes_per_comic(graph: nx.Graph):
     to the heroes that appear in them.
 
     :return
-    a list of Comic instances.
+    a pandas dataframe of comics and their number of heroes.
     """
     comics = []
     for comic in get_comic_nodes(graph):
-        comics.append(Comic(comic, graph.degree(comic)))
+        comics.append([comic, graph.degree(comic)])
 
-    return comics
+    return pd.DataFrame(comics, columns=['comic', 'n_heroes'])

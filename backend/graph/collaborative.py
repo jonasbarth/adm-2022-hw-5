@@ -6,7 +6,6 @@ import networkx as nx
 import pandas as pd
 
 from backend.describe import GraphType
-from backend.domain.hero import Collaboration
 from .preprocess import remove_self_loops, strip_trailing_characters, replace_hero
 from .weight import reciprocal_prop, max_prop
 
@@ -108,16 +107,13 @@ def get_hero_collabs(graph: nx.Graph):
     graph (nx.Graph) - a networkx graph.
 
     :return
-    a set of unique hero collaborations.
+    a dataframe of unique hero collaborations.
     """
-    collabs = set()
+    collabs = []
     for hero in graph.nodes():
 
         for neigh in graph.neighbors(hero):
             n_collabs = graph.get_edge_data(hero, neigh)['n_collabs']
-            collab = Collaboration(hero, neigh, n_collabs)
-            collabs.add(collab)
+            collabs.append([hero, neigh, n_collabs])
 
-    return collabs
-
-
+    return pd.DataFrame(collabs, columns=['hero_1', 'hero_2', 'n_collabs'])

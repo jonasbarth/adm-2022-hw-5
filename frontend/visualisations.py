@@ -1,13 +1,14 @@
 """Module for visualising backend functionalities."""
-import numpy as np
 import logging
 import os
 from tkinter import *
 
-import pandas as pd
-import networkx as nx
-from pyvis.network import Network
 import matplotlib.pyplot as plt
+import networkx as nx
+import numpy as np
+import pandas as pd
+from IPython.display import display
+from pyvis.network import Network
 
 from backend.describe import GraphFeatures, GraphType
 from backend.domain import Disconnection, Communities
@@ -42,7 +43,7 @@ def visualise_features(features: GraphFeatures):
     print('SOME INFO ABOUT THE HUBS:')
     print('')
     print('-->  The Hubs of the network are the following:')
-    print(list(features.hubs))
+    display(features.hubs)
     print('')
     print('*' * 70)
     print('')
@@ -51,8 +52,7 @@ def visualise_features(features: GraphFeatures):
     if features.graph_type == GraphType.COLLABORATIVE:
         print('SOME INFO ABOUT THE COLLABORATION OF EACH HERO:')
         print('')
-        for collab in features.hero_collabs:
-            print(f'{collab.hero1} has {collab.n_collabs} collaborations with {collab.hero2}.')
+        display(features.hero_collabs)
         print('')
         print('*' * 70)
 
@@ -60,9 +60,7 @@ def visualise_features(features: GraphFeatures):
     if features.graph_type == GraphType.HERO_COMIC:
         print('SOME INFO ABOUT THE COMICS:')
         print('')
-
-        for comic in features.n_heroes_per_comic:
-            print(f'The comic {comic.name} has {comic.n_heroes} heroes')
+        display(features.n_heroes_per_comic)
         print('')
         print('*' * 70)
 

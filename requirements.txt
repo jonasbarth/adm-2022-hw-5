@@ -6,3 +6,4 @@ networkx
 tqdm
 pytest
 pyvis
+itables
