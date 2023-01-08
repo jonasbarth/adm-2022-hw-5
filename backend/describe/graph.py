@@ -35,7 +35,7 @@ class GraphFeatures:
     density: float
     degree_dist: any
     avg_degree: float
-    hubs: set()
+    hubs: pd.DataFrame
     mode: GraphMode
 
 
