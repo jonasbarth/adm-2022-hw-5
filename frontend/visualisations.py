@@ -306,3 +306,34 @@ def visualise_communities(comms: Communities):
     logger.info(f"Successfully wrote final graph to: {final_graphs_file}.")
 
     return message, fig, original_graph_file, communities_graphs_file, final_graphs_file
+
+
+def visualize_shortest_path(shortest_path):
+
+    nodes_path = []
+
+    for p in shortest_path:
+        nodes_path.append(p[1])
+
+    print('The shortest path in terms of comics is:', nodes_path)
+    print('')
+    print('*'*75)
+    print('')
+
+    # create a directed graph
+    G = nx.DiGraph()
+
+    # add edges to the graph
+    for path in shortest_path:
+        for i in range(len(path)-1):
+            G.add_edge(path[i], path[i+1])
+
+
+    # Plot the graph
+    plt.figure(figsize=(10, 10))
+    nx.draw(G, with_labels=True, node_size = 500)
+
+
+    # show the plot
+    plt.figure(figsize = (5, 5))
+    plt.show()
