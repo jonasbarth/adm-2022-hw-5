@@ -307,6 +307,7 @@ def visualise_communities(comms: Communities):
 
     return message, fig, original_graph_file, communities_graphs_file, final_graphs_file
 
+
 def visualize_shortest_path(shortest_path):
 
     nodes_path = []
@@ -334,5 +335,5 @@ def visualize_shortest_path(shortest_path):
 
 
     # show the plot
-    plt.figure(figsize = (6, 6))
+    plt.figure(figsize = (5, 5))
     plt.show()
