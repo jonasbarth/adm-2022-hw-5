@@ -48,7 +48,7 @@ class TopHeroService:
         The top N heroes are those who have appeared in the most number of comics.
 
         :arg
-        n (int) - the number of heroes.
+        n (int) - the number of heroes. If none, all heroes are returned.
 
         :return
         a list of the top n heroes.

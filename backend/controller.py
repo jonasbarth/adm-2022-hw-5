@@ -1,8 +1,13 @@
 """A controller module for the Marvel Hero graph."""
+import logging
 
 import networkx as nx
 
-from .manager import features, shortest_ordered_route, disconnecting_graphs
+from .manager import features, shortest_ordered_route, disconnecting_graphs, metrics, extract_communities
+
+logging.basicConfig(format='%(asctime)s - %(message)s', datefmt='%d-%b-%y %H:%M:%S')
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 
 class Controller:
@@ -14,10 +19,12 @@ class Controller:
         :arg
         graph (nx.Graph) - the graph that this controller will operate on.
         """
-        self.graph = graph
+        self.graph = nx.Graph(graph)
         self.funcs = {features.__name__: features,
                       shortest_ordered_route.__name__: shortest_ordered_route,
-                      disconnecting_graphs.__name__: disconnecting_graphs}
+                      disconnecting_graphs.__name__: disconnecting_graphs,
+                      metrics.__name__: metrics,
+                      extract_communities.__name__: extract_communities}
 
     def run(self, identifier: str, top_n: int, **kwargs):
         """Runs the function that maps to the specific identifier on the graph of this controller.
@@ -33,4 +40,9 @@ class Controller:
         if identifier not in self.funcs:
             raise ValueError(f'The identifier \"{identifier}\" does not map to an existing function.')
 
-        return self.funcs[identifier](self.graph, top_n, **kwargs)
+        logger.info(f'Calling function \"{identifier}\".')
+        result = self.funcs[identifier](self.graph, top_n, **kwargs)
+
+        logger.info(f'Received result from function \"{identifier}\".')
+        return result
+

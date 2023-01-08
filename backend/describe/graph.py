@@ -30,12 +30,12 @@ class GraphFeatures:
     """A dataclass for describing graph features."""
     graph_type: GraphType
     n_nodes: int
-    hero_collabs: any
-    n_heroes_per_comic: any
+    hero_collabs: pd.DataFrame
+    n_heroes_per_comic: pd.DataFrame
     density: float
     degree_dist: any
     avg_degree: float
-    hubs: set()
+    hubs: pd.DataFrame
     mode: GraphMode
 
 
@@ -58,12 +58,16 @@ def get_hubs(graph: nx.Graph, percentile: int):
     :arg
     graph (nx.Graph) - the graph to get the hubs from.
     percentile (int) - the percentile to calculate the hub on. E.g. 95 is the 95th percentile.
+
+    :return
+    a pandas dataframe with the hubs of the network.
     """
     dist = get_degree_dist(graph)
 
     threshold = get_hub_threshold(dist, percentile)
+    dist.rename(columns={'node': 'hub'}, inplace=True)
 
-    return dist[dist.degree >= threshold].node.values
+    return dist[dist.degree >= threshold]
 
 
 def get_hub_threshold(dist: pd.DataFrame, percentile: int):
@@ -77,3 +81,20 @@ def get_hub_threshold(dist: pd.DataFrame, percentile: int):
     the hub threshold as an int value.
     """
     return np.percentile(dist.degree, percentile)
+
+
+def get_graph_mode(graph: nx.Graph):
+    """Returns the mode of the graph, i.e. whether it is sparse or dense.
+
+    :arg
+    graph (nx.Graph) - a networkx graph.
+
+    :return
+    a GraphMode Enum.
+    """
+    # 1 is maximum density, 0 is minimum density, so 0.5 is right in the middle.
+    if nx.density(graph) > 0.5:
+        return GraphMode.DENSE
+
+    return GraphMode.SPARSE
+

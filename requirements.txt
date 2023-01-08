@@ -5,3 +5,5 @@ matplotlib
 networkx
 tqdm
 pytest
+pyvis
+itables
