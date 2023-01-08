@@ -74,24 +74,20 @@ def shortest_order_route(graph: nx.Graph, N: int, **kwargs):
 
     hero_comic = pd.read_csv(hero_comic)
 
-    top_heroes = pd.DataFrame(hero_comic.groupby(['hero'])['hero'].count()).rename(columns={'hero':'Total_Appearances'}).sort_values('Total_Appearances', ascending = False)
-
-    def top_N(data, N):
-        return data[0:N-1]
-
-
     if initial_hero == final_hero:
           return('You are already there!')
 
     # First of all, we initialize the list which will contain the shortes path
     path = []
 
+    global hero_service
+    if not hero_service:
+        raise ValueError(f'The hero service must be created before calling any function.')
+
+    top_heroes = hero_service.top_n(N)
     # Second, we have to focus on the top N nodes in the graph.
     # To do it, we first remove the nodes (and the edges, of course) that are not in the top-N nodes
-    subg = get_subgraph_with(graph, list(top_N(top_heroes, N).index))
-
-    #if len(superheroes) == 0:
-          #return(nx.bidirectional_shortest_path(subg, initial_hero, final_hero))
+    subg = get_subgraph_with(graph, top_heroes)
 
     # Now we want to create a list containing all the superheroes we have to visit, inlcluding the starting one and the ending one
     superheroes.insert(0, initial_hero)
