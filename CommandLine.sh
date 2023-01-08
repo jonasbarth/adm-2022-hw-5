@@ -1,23 +1,25 @@
 #!/bin/bash
 
-# Make sure the script has the correct permissions to execute
-# if [ ! -x /Users/simonefacchiano/scripts/extract_pairs.sh ]; then
-#   echo "Error: NO PERMISSIONS"
-#   exit 1
-# fi
-
 # Parsing flags
-while getopts 'h:e' flag; do
-  case "${flag}" in
+while getopts 'h:e:' flag; do
+  case "$flag" in
     h) hero_network="${OPTARG}" ;;
     e) edges="${OPTARG}" ;;
     *) echo "Please specify the path to the hero_network file (-h) and to the edges file (-e)"
+      exit 1 ;;
   esac
 done
 
-echo hero_network
-echo edges
+if (( $OPTIND == 1 )); then
+   echo "Please specify the path to the hero_network file (-h) and to the edges file (-e)"
+   exit 1
+fi
+
+echo "Using the hero network file: $hero_network"
+echo "Using the edges file: $edges"
 ######### 1. What is the most popular pair of heroes (often appearing together in the comics)?
+
+echo "1. Finding the most popular pair of heroes."
 # Initialize an empty array to store the hero pairs
 pairs=()
 
@@ -51,7 +53,7 @@ while read -r line; do
     pairs+=("$hero1-$hero2")
     counts+=("1")
   fi
-done < /Users/simonefacchiano/Desktop/Data_Science/ADM/ADM_HW5/archive-2/hero-network-small.csv
+done < $hero_network
 
 # Find the index of the highest count
 max_index=0
@@ -66,6 +68,7 @@ echo "Most popular hero pair: ${pairs[$max_index]} (${counts[$max_index]} appear
 
 
 ######### 2. Number of comics per hero.
+echo "2. Finding the number of comics per hero."
 
 # Initialize an empty array to store the hero names
 heroes=()
@@ -95,7 +98,7 @@ while read -r line; do
     heroes+=("$hero")
     counts+=("1")
   fi
-done < /Users/simonefacchiano/Desktop/Data_Science/ADM/ADM_HW5/archive-2/edges-small.csv
+done < $edges
 
 # Print out the hero names and counts
 for i in "${!heroes[@]}"; do
@@ -105,6 +108,7 @@ done
 
 ######### 3. The average number of heroes in comics.
 
+echo "3. Finding the average number of heroes in comics."
 # Initialize variables to store the total number of comics and the total number of heroes
 num_comics=0
 num_heroes=0
@@ -132,7 +136,7 @@ while read -r line; do
     comics+=("$comic")
     num_comics=$((num_comics + 1))
   fi
-done < /Users/simonefacchiano/Desktop/Data_Science/ADM/ADM_HW5/archive-2/edges-small.csv
+done < $edges
 
 # Calculate the average number of heroes per comic
 average=$(echo "scale=2; $num_heroes / $num_comics" | bc)
