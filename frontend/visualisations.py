@@ -165,7 +165,7 @@ def visualise_disconnected_graph(disc: Disconnection):
     return message, original_graph_file, disconnected_graphs_file
 
 
-def visualise_metrics(graph_metrics: dict, node_metrics: dict, metric: str):
+def visualise_metrics(graph_metrics: tuple, node_metrics: tuple, metric: str):
     """Returns a table of the average metric values over the graph metrics and the single node metric.
 
     :arg
@@ -174,10 +174,11 @@ def visualise_metrics(graph_metrics: dict, node_metrics: dict, metric: str):
     metric (str) - the name of the metric that was used.
     table_format (str) - the format of the table to be returned.
     """
-    avg = np.average([*graph_metrics.values()])
+    top_n, top_n_avg_metric = graph_metrics
+    node, metric_value = node_metrics
 
-    data = [[avg, *node_metrics.values()]]
-    headers = [f'Top {len(graph_metrics)} Heroes Average', *node_metrics.keys()]
+    data = [[top_n_avg_metric, metric_value]]
+    headers = [f'Top {top_n} Heroes Average', f'{node}']
 
     df_metrics = pd.DataFrame(data=data, columns=headers)
 

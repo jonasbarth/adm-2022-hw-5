@@ -1,6 +1,7 @@
 """This module is the central entry point to all backend functionalities."""
 
 import networkx as nx
+import numpy as np
 
 from backend.graph import get_n_heroes_per_comic, get_subgraph_with, get_hero_collabs
 from backend.service import TopHeroService
@@ -137,7 +138,8 @@ def metrics(graph: nx.Graph, top_n: int, **kwargs):
     closeness_centrality, degree_centrality.
 
     :return
-    (dict, float) - a dictionary with the metric values for the top n heroes, and the metric value for the specific node.
+    (int, float), (str, float) - a tuple with the mean metric value for the top n heroes, anda tuple the metric value
+    for the specific node.
     """
 
     node, metric = kwargs.get('node'), kwargs.get('metric')
@@ -156,7 +158,7 @@ def metrics(graph: nx.Graph, top_n: int, **kwargs):
     if metric == 'betweenness_centrality':
         metric_values = nx.betweenness_centrality(subgraph)
     elif metric == 'pagerank':
-        metric_values = nx.pagerank(subgraph)
+        metric_values = nx.pagerank_numpy(subgraph)
     elif metric == 'closeness_centrality':
         metric_values = nx.closeness_centrality(subgraph)
     elif metric == 'degree_centrality':
@@ -167,14 +169,10 @@ def metrics(graph: nx.Graph, top_n: int, **kwargs):
     # Get the metric value for the given node
     node_metric_value = metric_values[node]
 
-    # Get the top N nodes with the most edges
-    top_n_edges = sorted(subgraph.degree, key=lambda x: x[1], reverse=True)[:top_n]
-    top_n_nodes = [t[0] for t in top_n_edges]
+    # Get the average metric value
+    mean_metric = np.array(list(metric_values.values())).mean()
 
-    # Filter the metric values for the top N nodes
-    top_n_metric_values = {k: v for k, v in metric_values.items() if k in top_n_nodes}
-
-    return top_n_metric_values, {node: node_metric_value}
+    return (top_n, mean_metric), (node, node_metric_value)
 
 
 def _edge_to_remove(graph):
