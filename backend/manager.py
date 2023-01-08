@@ -1,6 +1,7 @@
 """This module is the central entry point to all backend functionalities."""
 
 import networkx as nx
+import pandas as pd
 import numpy as np
 
 from backend.graph import get_n_heroes_per_comic, get_subgraph_with, get_hero_collabs
@@ -223,7 +224,7 @@ def extract_communities(graph: nx.Graph, top_n: int, **kwargs):
 
     hs = TopHeroService.create_from('data/edges.csv')
     top_heroes = hs.top_n(top_n)
-    
+
     if hero_1 not in top_heroes:
         raise ValueError(f'The provided hero_1: {hero_1} is not part of the top_n: {top_n} heroes.')
 
@@ -247,3 +248,56 @@ def extract_communities(graph: nx.Graph, top_n: int, **kwargs):
 
     community_1, community_2 = communities
     return Communities(min_cut, subgraph, hero_1, hero_2, community_1, community_2, same_community)
+
+
+
+def shortest_order_route(graph: nx.Graph, N: int, **kwargs):
+
+    initial_hero = kwargs.get('initial_hero')
+    final_hero = kwargs.get('final_hero')
+    superheroes = kwargs.get('superheroes')
+    hero_comic = kwargs.get('hero_comic')  # path of the .csv file
+
+    hero_comic = pd.read_csv(hero_comic)
+
+    top_heroes = pd.DataFrame(hero_comic.groupby(['hero'])['hero'].count()).rename(columns={'hero':'Total_Appearances'}).sort_values('Total_Appearances', ascending = False)
+
+    def top_N(data, N):
+        return data[0:N-1]
+
+
+    if initial_hero == final_hero:
+          return('You are already there!')
+
+    # First of all, we initialize the list which will contain the shortes path
+    path = []
+
+    # Second, we have to focus on the top N nodes in the graph.
+    # To do it, we first remove the nodes (and the edges, of course) that are not in the top-N nodes
+    subg = get_subgraph_with(graph, list(top_N(top_heroes, N).index))
+
+    #if len(superheroes) == 0:
+          #return(nx.bidirectional_shortest_path(subg, initial_hero, final_hero))
+
+    # Now we want to create a list containing all the superheroes we have to visit, inlcluding the starting one and the ending one
+    superheroes.insert(0, initial_hero)
+    superheroes.append(final_hero)
+
+
+    # Now, we compute the shortest path between the first and the second, then between the second and the third, and so on,
+    # until we visit (in order) all the nodes contained in the original list given as input
+    for h in range(len(superheroes) - 1):
+        try:
+            if superheroes[h] not in subg.nodes():
+                return('WARNING: this here is not in the graph! Try to change N or check if the spelling is correct')
+
+            a = nx.bidirectional_shortest_path(subg, superheroes[h], superheroes[h+1])
+            if len(a) == 0:
+                return("WARNING: There is no such path!")
+            path.append(a)
+
+        except:
+            print('Sorry, there is no such path...')
+            return
+
+    return(path)
