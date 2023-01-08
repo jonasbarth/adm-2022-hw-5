@@ -11,7 +11,10 @@ Contributors:
 * `frontend` a package containing all frontend functionalities
 * `doc` a folder with images and other documents
 * `test` a folder with test
-* `main.ipynb` the main notebook
+* `main.ipynb` the main notebook. **NOTE:** Use the nbviewer link below.
+
+# Viewing Notebook
+Since we use some graphics that are not properly rendered here on github, look at the notebook [here instead](https://nbviewer.org/github/jonasbarth/adm-2022-hw-5/blob/main/main.ipynb).
 
 # Data
 The data used in this homework can be [downloaded here](https://www.kaggle.com/datasets/csanhueza/the-marvel-universe-social-network?select=hero-network.csv).
