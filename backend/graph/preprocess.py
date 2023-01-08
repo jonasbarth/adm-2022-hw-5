@@ -45,6 +45,6 @@ def strip_trailing_characters(data: pd.DataFrame, cols: iter = None):
 
 
 def _strip_trailing(hero: str):
-    hero = hero.rstrip()
-    hero = hero.rstrip("/")
-    return hero
+    for index, char in enumerate(reversed(hero)):
+        if char.isalnum():
+            return hero[:len(hero) - index]
