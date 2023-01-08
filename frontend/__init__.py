@@ -1,1 +1,1 @@
-from .visualisations import visualise_disconnected_graph, visualise_metrics, visualise_communities, visualise_features
+from .visualisations import visualise_disconnected_graph, visualise_metrics, visualise_communities, visualise_features, visualize_shortest_path
