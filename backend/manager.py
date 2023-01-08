@@ -10,6 +10,12 @@ from .describe import GraphType, GraphFeatures, get_degree_dist, get_hubs, get_g
 from .domain import Disconnection, Communities
 
 
+hero_service = None
+
+def create_hero_service(data, preprocess=True):
+    global hero_service
+    hero_service = TopHeroService.create_from(data, preprocess)
+
 def features(graph: nx.Graph, top_n: int, **kwargs):
     """Extracts the features of the graph.
 
@@ -31,9 +37,12 @@ def features(graph: nx.Graph, top_n: int, **kwargs):
 
     hero_collabs = {}
     n_heroes_per_comic = []
-    hs = TopHeroService.create_from('data/edges.csv')
 
-    top_heroes = hs.top_n(top_n)
+    global hero_service
+    if not hero_service:
+        raise ValueError(f'The hero service must be created before calling any function.')
+
+    top_heroes = hero_service.top_n(top_n)
 
     if graph_type == GraphType.COLLABORATIVE:
         subgraph = graph.subgraph(top_heroes)
@@ -106,8 +115,11 @@ def disconnecting_graphs(graph: nx.Graph, top_n: int, **kwargs):
     hero_a = kwargs.get('hero_a')
     hero_b = kwargs.get('hero_b')
 
-    hs = TopHeroService.create_from('data/edges.csv')
-    top_heroes = hs.top_n(top_n)
+    global hero_service
+    if not hero_service:
+        raise ValueError(f'The hero service must be created before calling any function.')
+
+    top_heroes = hero_service.top_n(top_n)
     subgraph = nx.subgraph(graph, top_heroes)
 
     if hero_a not in top_heroes:
@@ -145,8 +157,11 @@ def metrics(graph: nx.Graph, top_n: int, **kwargs):
 
     node, metric = kwargs.get('node'), kwargs.get('metric')
 
-    hs = TopHeroService.create_from('data/edges.csv')
-    top_heroes = hs.top_n(top_n)
+    global hero_service
+    if not hero_service:
+        raise ValueError(f'The hero service must be created before calling any function.')
+
+    top_heroes = hero_service.top_n(top_n)
 
     if not node:
         raise ValueError(f'The node must not be None.')
@@ -222,8 +237,11 @@ def extract_communities(graph: nx.Graph, top_n: int, **kwargs):
     if not hero_2:
         raise ValueError(f'The hero_2 kwargs needs to be set.')
 
-    hs = TopHeroService.create_from('data/edges.csv')
-    top_heroes = hs.top_n(top_n)
+    global hero_service
+    if not hero_service:
+        raise ValueError(f'The hero service must be created before calling any function.')
+
+    top_heroes = hero_service.top_n(top_n)
 
     if hero_1 not in top_heroes:
         raise ValueError(f'The provided hero_1: {hero_1} is not part of the top_n: {top_n} heroes.')
